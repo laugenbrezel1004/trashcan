@@ -4,7 +4,7 @@ mod permissions; // Deklariert das Modul permissions (entspricht permissions.rs)
 use std::env;
 use std::fs;
 use std::path::Path;
-use nix::libc::ftok;
+use nix::libc::{ftok, wait};
 use nix::unistd;
 
 fn main() {
@@ -25,7 +25,9 @@ fn check_existence(argument: &str, programmname: &str)  {
     if fs::exists(argument).expect("Something went horribly wrong") {
         #[cfg(debug_assertions)]
         println!("removing {}", argument);
-        fs::remove_file(argument).unwrap();
+        if let Err(e) = move_file_to_trashcan(argument) {
+            println!("Something went horribly wrong: {}", e);
+        }
     }
     else {
         eprintln!("{}: cannot remove '\'{}\'': No such file or directory ",programmname , argument);
@@ -33,9 +35,11 @@ fn check_existence(argument: &str, programmname: &str)  {
 }
 
 
-fn delete_file(argument: &str) -> Result<(), String> {
-    fs::remove_file(argument).map_err(|e| e.to_string())?;
-    fs::
+fn move_file_to_trashcan(argument: &str) -> Result<(), String> {
+    let uid = unistd::getuid();
+    let destination = format!("/tmp/trashcan-{}", uid);
+    fs::rename(argument, "/tmp").map_err(|e| e.to_string())?;
+    nix::libc::rename()
     Ok(())
 }
 
