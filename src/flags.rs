@@ -1,4 +1,5 @@
 use clap::{Arg, Command};
+use std::env;
 
 pub fn check_flags() {
     let matches = Command::new("trashcan")
@@ -21,9 +22,12 @@ Nothing",
                 .long("show-config")
                 .help("Show the current config file")
                 .action(clap::ArgAction::SetTrue),
-        ).get_matches();
+        )
+        .get_matches_from(env::args().collect::<Vec<String>>());
+    // Hole die rohen Argumente (inklusive Subcommands)
+    let raw_args: Vec<String> = std::env::args().collect();
 
-    // Argumente auswerten
+    // Prüfe, ob verbose gesetzt ist
     if matches.get_flag("force") {
         println!("Forced flag present, will be overwritten");
     }

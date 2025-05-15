@@ -14,14 +14,14 @@ fn main() {
     #[cfg(debug_assertions)]
     println!("args => {:?}", args);
 
-    let programname = args[0].clone();
     //get duration for deleting files
     let uid = unistd::getuid();
     let location = format!("/tmp/trashcan-{}", uid);
+    let programname =  env::args().nth(1).unwrap();
 
     let trashcan1 = Trashcan{
         location: &location,
-        duration: 10 //when to delete files -> in progress right now
+        duration: 10 //when to delete files -> in progress right now TODO:
     };
 
     // build trashcan if not available
