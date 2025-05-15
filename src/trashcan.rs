@@ -1,5 +1,4 @@
 use std::fs;
-use nix::unistd;
 
 pub struct Trashcan<'a> {
     pub location: &'a str,
