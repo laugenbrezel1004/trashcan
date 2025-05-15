@@ -3,7 +3,6 @@
 mod trashcan;
 mod file;
 mod flags;
-mod asdf;
 
 use std::env;
 use nix::unistd;
