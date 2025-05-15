@@ -38,13 +38,22 @@ Nothing",
         println!("Forced flag present, will be overwritten");
         // Zugriff auf alle Werte von --force
         if let Some(force_args) = matches.get_many::<String>("force") {
+            #[cfg(debug_assertions)]
             println!("Force arguments:");
             for arg in force_args {
                 println!("  - {}", arg);
             }
         } else {
-            println!("Keine Werte für --force angegeben (sollte nicht passieren wegen num_args(1..))");
+            println!("trashcan: missing operand\nTry \'trashcan --help\' for more information.");
         }
     }
-
+    if let Some(files) = matches.get_many::<String>("files") {
+        #[cfg(debug_assertions)]
+        println!("Files to delete:");
+        for file in files {
+            println!("  - {}", file);
+        }
+    } else {
+        println!("No files specified");
+    }
 }
