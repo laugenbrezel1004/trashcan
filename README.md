@@ -93,3 +93,5 @@ I cannot stress this enough: this is a learning project.  Do not rely on it for 
 *   Add a command to permanently delete files from the trashcan.
 *   Add support for recursive deletion (be careful with this one!).
 *   Maybe add a GUI? (Okay, that's probably a bit ambitious.)
+
+Written by some local AI with https://github.com/laugenbrezel1004/kailian
