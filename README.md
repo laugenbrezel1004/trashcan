@@ -79,7 +79,7 @@ Feel free to open issues and pull requests!  I'm still learning, so any help is 
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the nothing so far...
 
 ## Disclaimer (again!)
 
