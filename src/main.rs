@@ -17,7 +17,7 @@ fn main() {
     //get duration for deleting files
     let uid = unistd::getuid();
     let location = format!("/tmp/trashcan-{}", uid);
-    let programname =  env::args().nth(1).unwrap();
+    let programname =  env::args().nth(0).unwrap();
 
     let trashcan1 = Trashcan{
         location: &location,

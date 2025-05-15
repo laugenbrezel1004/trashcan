@@ -6,6 +6,7 @@ pub fn check_flags() {
         .version("0.1.0")
         .author("Laurenz Schmidt")
         .about("rm replacement for dummies")
+        .override_usage("trashcan [FLAGS] FileToDelete")
         .after_help(
             "ENVIRONMENT VARIABLES:\n\
 Nothing",
@@ -13,22 +14,37 @@ Nothing",
         .arg(
             Arg::new("force")
                 .long("force")
+                .value_name("FILE")
                 .help("destroy file forever and ever - without idiot protection")
-                .action(clap::ArgAction::SetTrue),
+                //.action(clap::ArgAction::SetTrue)
+                .num_args(1..),
         )
         .arg(
             Arg::new("show_config")
                 .short('s')
                 .long("show-config")
                 .help("Show the current config file")
-                .action(clap::ArgAction::SetTrue),
+               .action(clap::ArgAction::SetTrue),
+        )
+        .arg(
+            Arg::new("files")
+                .help("Files to delete")
+                .num_args(1..) // Mindestens ein positionales Argument
+                .index(1), // Positionale Argumente ab Index 1
         )
         .get_matches_from(env::args().collect::<Vec<String>>());
-    // Hole die rohen Argumente (inklusive Subcommands)
-    let raw_args: Vec<String> = std::env::args().collect();
 
-    // Prüfe, ob verbose gesetzt ist
-    if matches.get_flag("force") {
+    if matches.contains_id("force") {
         println!("Forced flag present, will be overwritten");
+        // Zugriff auf alle Werte von --force
+        if let Some(force_args) = matches.get_many::<String>("force") {
+            println!("Force arguments:");
+            for arg in force_args {
+                println!("  - {}", arg);
+            }
+        } else {
+            println!("Keine Werte für --force angegeben (sollte nicht passieren wegen num_args(1..))");
+        }
     }
+
 }
