@@ -1,18 +1,25 @@
 // src/main.rs
-mod permissions; // Deklariert das Modul permissions (entspricht permissions.rs)
+
+mod trashcan;
 
 use std::env;
 use std::fs;
-use std::path::Path;
-use nix::libc::{ftok, wait};
 use nix::unistd;
+use std::process;
+use trashcan::Trashcan;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     #[cfg(debug_assertions)]
     println!("args => {:?}", args);
     let programmname = args[0].clone();
-    check_trashcan();
+    let uid = unistd::getuid();
+    let destination = format!("/tmp/trashcan-{}", uid);
+    let trashcan1 = Trashcan{
+        location: destination,
+        duration: 10
+    };
+    trashcan1.check_trashcan();
     // Überspringe den ersten Argument (Programmname)
     for arg in args.iter().skip(1) {
         check_existence(&arg, &programmname);
@@ -22,36 +29,35 @@ fn main() {
 // Prüft, ob die Datei existiert
 fn check_existence(argument: &str, programmname: &str)  {
     //if Path::new(argument).exists() {
-    if fs::exists(argument).expect("Something went horribly wrong") {
-        #[cfg(debug_assertions)]
-        println!("removing {}", argument);
-        if let Err(e) = move_file_to_trashcan(argument) {
-            println!("Something went horribly wrong: {}", e);
+    match fs::exists(argument) {
+        Ok(true) => {
+            if let Err(e) = move_file_to_trashcan(argument) {
+                #[cfg(debug_assertions)]
+                println!("removing {}", argument);
+                println!("Something went horribly wrong: {}", e);
+            }
         }
-    }
-    else {
-        eprintln!("{}: cannot remove '\'{}\'': No such file or directory ",programmname , argument);
+        Ok(false) | Err(_) => {
+            eprintln!("{}: cannot remove '{}': No such file or directory", programmname, argument);
+        }
     }
 }
 
 
 fn move_file_to_trashcan(argument: &str) -> Result<(), String> {
-    let uid = unistd::getuid();
-    let destination = format!("/tmp/trashcan-{}", uid);
-    fs::rename(argument, "/tmp").map_err(|e| e.to_string())?;
-    nix::libc::rename()
+    //TODO: Fehler behandeln
+    #[cfg(debug_assertions)]
+    println!("destination => {:?}", destination);
+    //fs::copy(argument, destination).map_err(|err| err.to_string())?;
+    process::Command::new("mv")
+        .arg(argument)
+        .arg(destination)
+        .output()
+        .expect("failed to execute mv command");
+
     Ok(())
 }
 
-fn check_trashcan() {
-    let uid = unistd::getuid();
-    let dirname = format!("/tmp/trashcan-{}", uid);
-    if !fs::exists(&dirname).expect("Something went horribly wrong") {
-        //evtl noch den Fehler behandeln hahah
-        #[cfg(debug_assertions)]
-        println!("make trashcan");
-        fs::create_dir(dirname).unwrap();
-    }
-}
+
 
 
