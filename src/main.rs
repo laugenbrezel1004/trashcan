@@ -16,10 +16,10 @@ fn main() {
     let programname = args[0].clone();
     //get duration for deleting files
     let uid = unistd::getuid();
-    let destination = format!("/tmp/trashcan-{}", uid);
+    let location = format!("/tmp/trashcan-{}", uid);
     
     let trashcan1 = Trashcan{
-        location: &destination,
+        location: &location,
         duration: 10 //when to delete files -> in progress right now
     };
     
@@ -27,12 +27,7 @@ fn main() {
     trashcan1.check_trashcan();
     
     for arg in args.iter().skip(1) {
-        // check if argument is valid
-        if let Err(e) = file::check_existence(&arg, &programname) {
-            Err(e) =>
-            { 
-                eprintln!("{}: cannot remove \'{}\': No such file or directory", &programname, &arg);
-            }
-        }
+        //check if files exists and delete if it does
+        file::check_existence(&arg, &programname, trashcan1.location)
     }
 }

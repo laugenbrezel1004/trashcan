@@ -1,31 +1,25 @@
 use std::{fs, process};
 
-pub fn check_existence(argument: &str, programname: &str) -> Result<(), String> {
-    //if Path::new(argument).exists() {
+pub fn check_existence(argument: &str, programname: &str, location: &str) {
     match fs::exists(argument) {
         Ok(true) => {
-            move_file_to_trashcan(argument)?;
-            Ok(())
+            move_file_to_trashcan(argument, location);
         }
         //file does not exist
         Ok(false) | Err(_) => {
-            return Err(format!(
-                "{}: cannot remove '{}': No such file or directory",
-                programmname, argument
-            ));
+                eprintln!("{}: cannot remove '{}': No such file or directory", programname, argument
+            );
         }
     }
 }
-pub fn move_file_to_trashcan(argument: &str) -> Result<(), String> {
+pub fn move_file_to_trashcan(argument: &str, location: &str) {
     //TODO: Fehler behandeln
     #[cfg(debug_assertions)]
-    println!("destination => {:?}", destination);
+    println!("destination => {:?}", location);
     //fs::copy(argument, destination).map_err(|err| err.to_string())?;
     process::Command::new("mv")
         .arg(argument)
-        .arg(destination)
+        .arg(location)
         .output()
         .expect("failed to execute mv command");
-
-    Ok(())
 }
