@@ -1,9 +1,9 @@
 use chrono::Local;
 use std::{fs, process};
-pub fn check_existence(argument: &str,  location: &str) {
+pub fn check_existence(argument: &str,  location: &str) -> bool {
     match fs::exists(argument) {
         Ok(true) => {
-            move_file_to_trashcan(argument, location);
+            return true
         }
         //file does not exist
         Ok(false) | Err(_) => {
@@ -11,19 +11,22 @@ pub fn check_existence(argument: &str,  location: &str) {
                 "trashcan: cannot remove '{}': No such file or directory",
                 argument
             );
+            return false;
         }
     }
 }
 pub fn move_file_to_trashcan(argument: &str, location: &str) {
-    //TODO: Fehler behandeln
     #[cfg(debug_assertions)]
     println!("destination => {:?}", location);
     let suffix_time = Local::now().format("%H:%M:%S").to_string();
-    let location = format!("{}/{}{}", location, argument, suffix_time);
+    let location = format!("{}/{}{}", location, argument, suffix_time); // location e.g. /home/laurenz/.local/share/trashcan/deletefile10:10:10
     //fs::copy(argument, destination).map_err(|err| err.to_string())?;
     process::Command::new("mv")
         .arg(argument)
         .arg(location)
         .output()
         .expect("failed to execute mv command");
+}
+pub fn nuke_file(argument: &str) {
+    std::fs::remove_file(argument).expect("failed to remove file");
 }

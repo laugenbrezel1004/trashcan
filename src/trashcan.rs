@@ -1,5 +1,7 @@
 use std::fs;
 
+
+// hier noch mehr werte definieren, soll auch Umgebungsvarialben und .config gelesen werden
 pub struct Trashcan<'a> {
     pub location: &'a str,
     pub duration: u8,
