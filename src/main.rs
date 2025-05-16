@@ -2,7 +2,6 @@
 
 mod trashcan;
 mod file;
-mod flags;
 
 use std::env;
 use std::process::exit;
