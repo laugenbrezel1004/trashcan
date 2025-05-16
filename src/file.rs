@@ -1,6 +1,6 @@
 use chrono::Local;
 use std::{fs, process};
-pub fn check_existence(argument: &str, programname: &str, location: &str) {
+pub fn check_existence(argument: &str,  location: &str) {
     match fs::exists(argument) {
         Ok(true) => {
             move_file_to_trashcan(argument, location);
@@ -8,8 +8,8 @@ pub fn check_existence(argument: &str, programname: &str, location: &str) {
         //file does not exist
         Ok(false) | Err(_) => {
             eprintln!(
-                "{}: cannot remove '{}': No such file or directory",
-                programname, argument
+                "trashcan: cannot remove '{}': No such file or directory",
+                argument
             );
         }
     }

@@ -52,12 +52,12 @@ Nothing",
     if let Some(files) = matches.get_many::<String>("files") {
         // wenn keine files angegeben ist abbrachen
         let minanzahl : u8 = 2;
-        if matches.get_count("files") < minanzahl {
-            eprintln!("trashcan: missing operand");
-            unsafe {
-                exit(1);
-            }
-        }
+      //  if matches.get_count("files") <= minanzahl {
+        //      eprintln!("trashcan: missing operand");
+        //  unsafe {
+        //      exit(1);
+        //  }
+        // }
         #[cfg(debug_assertions)]
         println!("Files to delete:");
         //damit "trashcan" nicht als file gewertet wird

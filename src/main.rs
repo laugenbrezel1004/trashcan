@@ -5,6 +5,7 @@ mod file;
 mod flags;
 
 use std::env;
+use std::process::exit;
 use nix::unistd;
 use users::{get_user_by_uid, get_current_uid};
 use users::os::unix::UserExt;
@@ -17,10 +18,15 @@ fn main() {
     println!("args => {:?}", args);
     let mut location: String = "".to_string();
 
+    //check if arguemnts are provide
+    if args.len() < 2 {
+        eprintln!("Too few arguments.");
+        exit(1);
+    }
+
     //get duration for deleting files
     if let Some(user) = get_user_by_uid(get_current_uid()) {
         location = format!("{}/.local/share/trashcan", user.home_dir().display());
-        let programname =  env::args().nth(0).unwrap();
     }
     let trashcan1 = Trashcan{
         location: &location,
@@ -32,7 +38,7 @@ fn main() {
 
     for arg in args.iter().skip(1) {
         //check if files exists and delete if it does
-        flags::check_flags();
-        //file::check_existence(&arg, &programname, trashcan1.location)
+       // flags::check_flags();
+        file::check_existence(&arg, trashcan1.location);
     }
 }
