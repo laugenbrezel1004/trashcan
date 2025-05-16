@@ -7,4 +7,5 @@ edition = "2024"
 nix = { version = "0.30.1", features = ["user"] }
 chrono = "0.4.41"
 clap = "4.5.38"
+users = "0.11.0"
 

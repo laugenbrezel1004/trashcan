@@ -6,6 +6,8 @@ mod flags;
 
 use std::env;
 use nix::unistd;
+use users::{get_user_by_uid, get_current_uid};
+use users::os::unix::UserExt;
 use trashcan::Trashcan;
 
 fn main() {
@@ -13,12 +15,13 @@ fn main() {
 
     #[cfg(debug_assertions)]
     println!("args => {:?}", args);
+    let mut location: String = "".to_string();
 
     //get duration for deleting files
-    let uid = unistd::getuid();
-    let location = format!("/tmp/trashcan-{}", uid);
-    let programname =  env::args().nth(0).unwrap();
-
+    if let Some(user) = get_user_by_uid(get_current_uid()) {
+        location = format!("{}/.local/share/trashcan", user.home_dir().display());
+        let programname =  env::args().nth(0).unwrap();
+    }
     let trashcan1 = Trashcan{
         location: &location,
         duration: 10 //when to delete files -> in progress right now TODO:

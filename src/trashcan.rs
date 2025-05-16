@@ -11,6 +11,7 @@ impl Trashcan<'_> {
             //TODO: Fehler behandeln
             #[cfg(debug_assertions)]
             println!("make trashcan");
+            println!("Trashcan directory: {}", self.location);
             fs::create_dir(self.location).unwrap();
         }
     }
