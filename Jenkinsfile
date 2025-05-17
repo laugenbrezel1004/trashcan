@@ -44,7 +44,14 @@ pipeline {
                     repository: 'laugenbrezel1004/trashcan', // Your repository
                     tag: "${RELEASE_TAG}", // Tag for the release
                     commitish: 'main', // Branch or commit SHA
-                    assets: 'target/release/trashcan'
+                )
+                uploadGithubReleaseAsset(
+                        credentialId: 'github-pat',
+                        repository: 'laugenbrezel1004/trashcan',
+                        tagName: "${RELEASE_TAG}",
+                        uploadAssets: [
+                                [filePath: 'target/release/trashcan']
+                        ]
                 )
             }
         }
