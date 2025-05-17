@@ -1,7 +1,7 @@
 use std::{fs, process};
 use uuid::Uuid;
 
-pub fn check_existence(argument: &str, location: &str) -> bool {
+pub fn check_existence(argument: &str) -> bool {
     return match fs::exists(argument) {
         Ok(true) => true,
         //file does not exist

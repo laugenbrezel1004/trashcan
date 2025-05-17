@@ -5,18 +5,24 @@ mod trashcan;
 
 use crate::file::{move_file_to_trashcan, nuke_file};
 use crate::trashcan::Trashcan;
-use clap::{Arg, Command, ArgAction};
-use std::path::PathBuf;
-use thiserror::Error;
-use users::{get_current_uid, get_user_by_uid};
+use clap::{Arg, ArgAction, Command};
 use users::os::unix::UserExt;
+use users::{get_current_uid, get_user_by_uid};
 
-
-
+#[cfg(target_os = "linux")]
 fn main() {
+    let trashcan: Trashcan;
     // Trashcan initialisieren
-    let trashcan = initialize_trashcan();
-
+    match initialize_trashcan() {
+        Ok(trash) => {
+            trashcan = trash;
+        }
+        // sollte nicht eintreffen, sollt
+        Err(e) => {
+            eprintln!("trashcan: Something went horribly wrong: {}", e);
+            std::process::exit(1);
+        }
+    }
     // Kommandozeilenargumente parsen
     let matches = Command::new("trashcan")
         .version("1.0.2")
@@ -40,28 +46,24 @@ fn main() {
                 .help("Show trashcan contents")
                 .action(ArgAction::SetTrue),
         )
-        .arg(
-            Arg::new("files")
-                .help("Files to delete")
-                .num_args(1..),
-        )
+        .arg(Arg::new("files").help("Files to delete").num_args(1..))
         .get_matches();
 
     // Aktionen ausführen
     if matches.get_flag("trashcan") {
+        //TODO: Feherl behandeln
         trashcan.nuke_trashcan();
     } else if matches.get_flag("show-trashcan") {
+        //TODO: Feherl behandeln
         trashcan.show_trashcan();
     } else if let Some(files) = matches.get_many::<String>("files") {
-        let action = if matches.get_flag("nuke") {
-            nuke_file
-        } else {
-            |file: &str| move_file_to_trashcan(file, &trashcan.location)
-        };
         for file in files {
-            if file::check_existence(file, &trashcan.location) {
-                action(file);
-                log::debug!("Processed file: {}", file);
+            if file::check_existence(&file) {
+                if matches.get_flag("nuke") {
+                    nuke_file(&file);
+                } else if matches.get_flag("files") {
+                    move_file_to_trashcan(&file, &trashcan.location);
+                }
             } else {
                 eprintln!("File not found: {}", file);
             }
@@ -69,20 +71,35 @@ fn main() {
     }
 }
 
-fn initialize_trashcan() -> Result<Trashcan, ()> {
-    // Home-Verzeichnis ermitteln
-    let home_dir = get_user_by_uid(get_current_uid())
-        .home_dir()
-        .to_str()
-        .ok_or(TrashcanError::InvalidHomeDir)?;
+fn initialize_trashcan() -> Result<Trashcan, String> {
+    // get home dir from user
+    let mut location = String::new();
+    if let Some(user) = get_user_by_uid(get_current_uid()) {
+        // Initialize trashcan location
+        location = format!("{}/.local/share/trashcan", user.home_dir().display());
+    }
+    #[cfg(debug_assertions)]
+    println!("Home directory: {}", &home_dir.display());
 
-    let location = format!("{}/.local/share/trashcan", home_dir);
+    let location = format!("{}/.local/share/trashcan", home_dir.display());
 
     // Trashcan erstellen
     let trashcan = Trashcan {
-        location: &location,
+        location,
         duration: 10, // TODO: Konfigurierbar machen
     };
-    trashcan.make_trashcan();
+    if let Err(e) = trashcan.make_trashcan() {
+        return Err(e.to_string());
+    }
     Ok(trashcan)
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::initialize_trashcan;
+
+    #[test]
+    fn test_initialize_trashcan() {
+        initialize_trashcan().unwrap();
+    }
 }
