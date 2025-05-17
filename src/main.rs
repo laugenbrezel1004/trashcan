@@ -15,9 +15,9 @@ use users::{get_current_uid, get_user_by_uid};
 // TODO: Check file permission -> fehler ausgeben
 // TODO:config file
 // TODO:umgebugnsvariablen?
-// TODO:mülleimer anzeigen
+// TODO:mülleimer anzeigen -> typ anzeigen? größe vom eimer anzeigen?
 // TODO: letzte datei wiederherstellen
-// TODO: --trashcan geht nicht
+// TODO: autocompletion in cmd
 
 fn main() {
     // get home dir from user
@@ -59,6 +59,12 @@ fn main() {
                 .help("Total Removal of Annoying Stuff, Hella Cleaned, Absolutely Nuked")
                 .action(clap::ArgAction::SetTrue),
         )
+        .arg(
+            Arg::new("show-trashcan")
+                .long("show-trashcan")
+                .help("show the disgusting trash")
+                .action(clap::ArgAction::SetTrue),
+        )
         .get_matches();
 
     // Handle nuke deletion
@@ -75,6 +81,8 @@ fn main() {
         }
     } else if matches.get_flag("trashcan") {
         trashcan.nuke_trashcan();
+    } else if matches.get_flag("show-trashcan") {
+        trashcan.show_trashcan();
     } else {
         // Move files to trashcan
         if let Some(files) = matches.get_many::<String>("files") {

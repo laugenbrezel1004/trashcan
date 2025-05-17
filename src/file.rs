@@ -1,5 +1,7 @@
 use chrono::Local;
 use std::{fs, process};
+use uuid::Uuid;
+
 pub fn check_existence(argument: &str, location: &str) -> bool {
     return match fs::exists(argument) {
         Ok(true) => true,
@@ -20,8 +22,8 @@ pub fn check_existence(argument: &str, location: &str) -> bool {
 pub fn move_file_to_trashcan(argument: &str, location: &str) {
     #[cfg(debug_assertions)]
     println!("destination => {:?}", location);
-    let suffix_time = Local::now().format("%H:%M:%S").to_string();
-    let location = format!("{}/{}{}", location, argument, suffix_time); // location e.g. /home/laurenz/.local/share/trashcan/deletefile10:10:10
+    let suffix_uuid = Uuid::new_v4();
+    let location = format!("{}/{}:{}", location, argument, suffix_uuid); // location e.g. /home/laurenz/.local/share/trashcan/deletefile10:10:10
     //fs::copy(argument, destination).map_err(|err| err.to_string())?;
     process::Command::new("mv")
         .arg(argument)
