@@ -12,20 +12,28 @@ use users::os::unix::UserExt;
 use crate::file::{move_file_to_trashcan, nuke_file};
 use crate::trashcan::Trashcan;
 
+// TODO: Check file permission -> fehler ausgeben
+// TODO:config file
+// TODO:umgebugnsvariablen?
+// TODO:mülleimer anzeigen
+// TODO: letzte datei wiederherstellen
+// TODO: error handeling
+
 
 fn main()  {
     // Initialize trashcan location
     // get home dir from user
     let mut location = String::new();
     if let Some(user) = get_user_by_uid(get_current_uid()) {
-        location = format!("{}/.local/share/trashcan", user.home_dir().display());
+        //location = format!("{}/.local/share/trashcan", user.home_dir().display());
+        location = format!("{}/.lasdfocal/share/trashcan", user.home_dir().display());
     }    let trashcan = Trashcan {
         location: &location,
         duration: 10, // TODO: Configurable duration
     };
 
     // Ensure trashcan directory exists
-    trashcan.check_trashcan();
+    trashcan.make_trashcan();
 
     // Parse command-line arguments
     let matches = Command::new("trashcan")
@@ -44,8 +52,13 @@ fn main()  {
             Arg::new("files")
                 .help("Files to delete")
                 .num_args(1..)
-                .required(true)
                 .value_parser(clap::value_parser!(String)),
+        )
+        .arg(
+            Arg::new("trashcan")
+                .long("trashcan")
+                .help("Total Removal of Annoying Stuff, Hella Cleaned, Absolutely Nuked")
+                .action(clap::ArgAction::SetTrue),
         )
         .get_matches();
 

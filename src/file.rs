@@ -1,17 +1,17 @@
 use chrono::Local;
 use std::{fs, process};
 pub fn check_existence(argument: &str,  location: &str) -> bool {
-    match fs::exists(argument) {
+    return match fs::exists(argument) {
         Ok(true) => {
-            return true
+            true
         }
         //file does not exist
-        Ok(false) | Err(_) => {
+        Ok(false) | Err(e) => {
             eprintln!(
-                "trashcan: cannot remove '{}': No such file or directory",
-                argument
+                "trashcan: cannot remove '{}': {}",
+                argument, e
             );
-            return false;
+            false
         }
     }
 }
@@ -28,5 +28,7 @@ pub fn move_file_to_trashcan(argument: &str, location: &str) {
         .expect("failed to execute mv command");
 }
 pub fn nuke_file(argument: &str) {
-    std::fs::remove_file(argument).expect("failed to remove file");
+    if let Err(e) = std::fs::remove_file(argument) {
+        eprintln!("trashcan: cannot remove '{}': {}", argument, e);
+    }
 }
