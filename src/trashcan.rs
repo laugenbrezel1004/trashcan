@@ -7,7 +7,7 @@ pub struct Trashcan<'a> {
     pub duration: u8,
 }
 impl Trashcan<'_> {
-    pub fn make_trashcan(&self) {
+    pub fn make_trashcan(&self) -> Result<(), ()> {
         #[cfg(debug_assertions)]
         println!("make trashcan");
         if let Err(e) = fs::create_dir(self.location) {
@@ -17,9 +17,11 @@ impl Trashcan<'_> {
                 eprintln!(
                     "You should check your trashcan directory and make sure that it can be created at valid point"
                 );
-                process::exit(1);
+                Err(e)
             }
         }
+
+        Ok(())
     }
 
     pub fn nuke_trashcan(&self) {

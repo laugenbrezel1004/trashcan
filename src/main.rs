@@ -5,95 +5,84 @@ mod trashcan;
 
 use crate::file::{move_file_to_trashcan, nuke_file};
 use crate::trashcan::Trashcan;
-use clap::{Arg, Command};
-use std::env;
-use std::path::Path;
+use clap::{Arg, Command, ArgAction};
+use std::path::PathBuf;
 use thiserror::Error;
-use users::os::unix::UserExt;
 use users::{get_current_uid, get_user_by_uid};
+use users::os::unix::UserExt;
 
-// TODO: Check file permission -> fehler ausgeben
-// TODO:config file
-// TODO:umgebugnsvariablen?
-// TODO:mülleimer anzeigen -> typ anzeigen? größe vom eimer anzeigen?
-// TODO: letzte datei wiederherstellen
-// TODO: autocompletion in cmd
+
 
 fn main() {
-    // get home dir from user
-    let mut location = String::new();
-    if let Some(user) = get_user_by_uid(get_current_uid()) {
-        // Initialize trashcan location
-        location = format!("{}/.local/share/trashcan", user.home_dir().display());
-    }
-    let trashcan = Trashcan {
-        location: &location,
-        duration: 10, // TODO: Configurable duration
-    };
+    // Trashcan initialisieren
+    let trashcan = initialize_trashcan();
 
-    // Ensure trashcan directory exists
-    trashcan.make_trashcan();
-
-    // Parse command-line arguments
+    // Kommandozeilenargumente parsen
     let matches = Command::new("trashcan")
         .version("1.0.2")
         .author("Laurenz Schmidt")
         .about("rm replacement with safe deletion")
-        .override_usage("trashcan [FLAGS] <FILES>...")
-        .after_help("ENVIRONMENT VARIABLES:\n    None yet")
         .arg(
             Arg::new("nuke")
                 .long("nuke")
-                .help("destroy file forever and ever - without idiot protection")
-                .action(clap::ArgAction::SetTrue),
-        )
-        .arg(
-            Arg::new("files")
-                .help("Files to delete")
-                .num_args(1..)
-                .value_parser(clap::value_parser!(String)),
+                .help("Permanently delete files")
+                .action(ArgAction::SetTrue),
         )
         .arg(
             Arg::new("trashcan")
                 .long("trashcan")
-                .help("Total Removal of Annoying Stuff, Hella Cleaned, Absolutely Nuked")
-                .action(clap::ArgAction::SetTrue),
+                .help("Clear the entire trashcan")
+                .action(ArgAction::SetTrue),
         )
         .arg(
             Arg::new("show-trashcan")
                 .long("show-trashcan")
-                .help("show the disgusting trash")
-                .action(clap::ArgAction::SetTrue),
+                .help("Show trashcan contents")
+                .action(ArgAction::SetTrue),
+        )
+        .arg(
+            Arg::new("files")
+                .help("Files to delete")
+                .num_args(1..),
         )
         .get_matches();
 
-    // Handle nuke deletion
-    if matches.get_flag("nuke") {
-        if let Some(files) = matches.get_many::<String>("files") {
-            for file in files {
-                if file::check_existence(file, trashcan.location) {
-                    nuke_file(file);
-                    log::debug!("Permanently deleted file: {}", file);
-                } else {
-                    eprintln!("File not found: {}", file);
-                }
-            }
-        }
-    } else if matches.get_flag("trashcan") {
+    // Aktionen ausführen
+    if matches.get_flag("trashcan") {
         trashcan.nuke_trashcan();
     } else if matches.get_flag("show-trashcan") {
         trashcan.show_trashcan();
-    } else {
-        // Move files to trashcan
-        if let Some(files) = matches.get_many::<String>("files") {
-            for file in files {
-                if file::check_existence(file, trashcan.location) {
-                    move_file_to_trashcan(file, trashcan.location);
-                    log::debug!("Moved file to trashcan: {}", file);
-                } else {
-                    eprintln!("File not found: {}", file);
-                }
+    } else if let Some(files) = matches.get_many::<String>("files") {
+        let action = if matches.get_flag("nuke") {
+            nuke_file
+        } else {
+            |file: &str| move_file_to_trashcan(file, &trashcan.location)
+        };
+        for file in files {
+            if file::check_existence(file, &trashcan.location) {
+                action(file);
+                log::debug!("Processed file: {}", file);
+            } else {
+                eprintln!("File not found: {}", file);
             }
         }
     }
+}
+
+fn initialize_trashcan() -> Result<Trashcan, ()> {
+    // Home-Verzeichnis ermitteln
+    let home_dir = get_user_by_uid(get_current_uid())
+        .home_dir()
+        .to_str()
+        .ok_or(TrashcanError::InvalidHomeDir)?;
+
+    let location = format!("{}/.local/share/trashcan", home_dir);
+
+    // Trashcan erstellen
+    let trashcan = Trashcan {
+        location: &location,
+        duration: 10, // TODO: Konfigurierbar machen
+    };
+    trashcan.make_trashcan();
+    Ok(trashcan)
 }
