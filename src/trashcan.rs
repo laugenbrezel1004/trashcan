@@ -11,13 +11,16 @@ impl Trashcan<'_> {
         #[cfg(debug_assertions)]
         println!("make trashcan");
         if let Err(e) = fs::create_dir(self.location) {
-            eprintln!("trashcan: cant create trashcan directory -> {}", e);
-            eprintln!("You should check your trashcan directory and make sure that it can be created at valid point");
-            process::exit(1);
+            // wenn verzeichnis schon vorhanden ist soll dieser schritt einfach geskipt werden
+            if e.kind() != std::io::ErrorKind::AlreadyExists {
+                eprintln!("trashcan: cant create trashcan directory -> {}", e);
+                eprintln!("You should check your trashcan directory and make sure that it can be created at valid point");
+                process::exit(1);
+            }
         }
     }
 
-    pub fn clear_trashcan(&self) {
+    pub fn nuke_trashcan(&self) {
         #[cfg(debug_assertions)]
         println!("nuke trashcan directory");
         if let Err(e) = fs::remove_dir_all(self.location) {
@@ -25,5 +28,7 @@ impl Trashcan<'_> {
             eprintln!("You should check your trashcan directory and make sure that it can be created at valid point");
             process::exit(1);
         }
+        //remove_dir_all löscht auch das verzeichnis, hier wird das trashcan verzeichnis wieder angelegt, nachdem "der inhalt" gelöscht wurde
+        self.make_trashcan();
     }
 }

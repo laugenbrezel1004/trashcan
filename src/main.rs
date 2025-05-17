@@ -17,6 +17,7 @@ use users::{get_current_uid, get_user_by_uid};
 // TODO:umgebugnsvariablen?
 // TODO:mülleimer anzeigen
 // TODO: letzte datei wiederherstellen
+// TODO: --trashcan geht nicht
 
 fn main() {
     // get home dir from user
@@ -72,6 +73,8 @@ fn main() {
                 }
             }
         }
+    } else if matches.get_flag("trashcan") {
+        trashcan.nuke_trashcan();
     } else {
         // Move files to trashcan
         if let Some(files) = matches.get_many::<String>("files") {
