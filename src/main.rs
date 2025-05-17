@@ -11,6 +11,7 @@ use users::{get_current_uid, get_user_by_uid};
 
 #[cfg(target_os = "linux")]
 fn main() {
+    println!("ficken");
     let trashcan: Trashcan;
     // Trashcan initialisieren
     match initialize_trashcan() {
