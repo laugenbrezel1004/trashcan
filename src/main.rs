@@ -3,31 +3,29 @@
 mod file;
 mod trashcan;
 
+use crate::file::{move_file_to_trashcan, nuke_file};
+use crate::trashcan::Trashcan;
 use clap::{Arg, Command};
 use std::env;
 use std::path::Path;
 use thiserror::Error;
-use users::{get_current_uid, get_user_by_uid};
 use users::os::unix::UserExt;
-use crate::file::{move_file_to_trashcan, nuke_file};
-use crate::trashcan::Trashcan;
+use users::{get_current_uid, get_user_by_uid};
 
 // TODO: Check file permission -> fehler ausgeben
 // TODO:config file
 // TODO:umgebugnsvariablen?
 // TODO:mülleimer anzeigen
 // TODO: letzte datei wiederherstellen
-// TODO: error handeling
 
-
-fn main()  {
-    // Initialize trashcan location
+fn main() {
     // get home dir from user
     let mut location = String::new();
     if let Some(user) = get_user_by_uid(get_current_uid()) {
-        //location = format!("{}/.local/share/trashcan", user.home_dir().display());
-        location = format!("{}/.lasdfocal/share/trashcan", user.home_dir().display());
-    }    let trashcan = Trashcan {
+        // Initialize trashcan location
+        location = format!("{}/.local/share/trashcan", user.home_dir().display());
+    }
+    let trashcan = Trashcan {
         location: &location,
         duration: 10, // TODO: Configurable duration
     };
@@ -37,7 +35,7 @@ fn main()  {
 
     // Parse command-line arguments
     let matches = Command::new("trashcan")
-        .version("rc1.0.0")
+        .version("1.0.1")
         .author("Laurenz Schmidt")
         .about("rm replacement with safe deletion")
         .override_usage("trashcan [FLAGS] <FILES>...")
@@ -87,5 +85,4 @@ fn main()  {
             }
         }
     }
-
 }
