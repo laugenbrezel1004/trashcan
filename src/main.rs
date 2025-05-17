@@ -79,9 +79,10 @@ fn initialize_trashcan() -> Result<Trashcan, String> {
         location = format!("{}/.local/share/trashcan", user.home_dir().display());
     }
     #[cfg(debug_assertions)]
-    println!("Home directory: {}", &home_dir.display());
+    //println!("Home directory: {}", &home_dir.display());
 
-    let location = format!("{}/.local/share/trashcan", home_dir.display());
+  //  let location = format!("{}/.local/share/trashcan", home_dir.display());
+    let location = "/home/laurenz/.local/share/trashcan".to_string();
 
     // Trashcan erstellen
     let trashcan = Trashcan {

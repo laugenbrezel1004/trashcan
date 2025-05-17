@@ -11,16 +11,17 @@ pipeline {
                 checkout scm
             }
         }
+         stage('Test') {
+                     steps {
+                         sh 'cargo test'
+                     }
+                 }
         stage('Build') {
             steps {
                 sh 'cargo build --release'
             }
         }
-        stage('Test') {
-            steps {
-                sh 'cargo test'
-            }
-        }
+
     }
     post {
         always {
