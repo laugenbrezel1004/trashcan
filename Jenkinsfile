@@ -34,17 +34,22 @@ pipeline {
                     }
                 }
 stage('Create GitHub Release') {
-            steps {
-                sh '''
-                    # Erstelle ein Release mit einem Tag
-                    curl -X POST \
-                        -H "Authorization: token $GITHUB_TOKEN" \
-                        -H "Accept: application/vnd.github.v3+json" \
-                        https://api.github.com/repos/$GITHUB_REPO/releases \
-                        -d "{\"tag_name\": \"$RELEASE_TAG\", \"name\": \"Release $RELEASE_TAG\", \"body\": \"Automated release from Jenkins\", \"draft\": false, \"prerelease\": false}"
-                '''
-            }
-        }
+    steps {
+        sh '''
+            # Erstelle ein Release mit einem Tag
+            jq -n --arg tag "$RELEASE_TAG" \
+                  --arg name "Release $RELEASE_TAG" \
+                  '{"tag_name": $tag, "name": $name, "body": "Automated release from Jenkins", "draft": false, "prerelease": false}' \
+                  > release.json
+            curl -X POST \
+                -H "Authorization: token $GITHUB_TOKEN" \
+                -H "Accept: application/vnd.github.v3+json" \
+                https://api.github.com/repos/$GITHUB_REPO/releases \
+                --data-binary @release.json
+            rm release.json
+        '''
+    }
+}
         stage('Upload Binary to Release') {
             steps {
                 sh '''
