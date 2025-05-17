@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             image 'rust:latest'
-            args '-u root'
+            args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
         }
     }
     stages {
