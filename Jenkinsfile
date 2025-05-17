@@ -45,7 +45,6 @@ pipeline {
                     tag: "${RELEASE_TAG}", // Tag for the release
                     commitish: 'main', // Branch or commit SHA
                     assets: 'target/release/trashcan'
-                    draft: false, // Draft status
                     prerelease: false // Pre-release status
                 )
             }
