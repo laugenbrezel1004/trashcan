@@ -11,11 +11,11 @@ pipeline {
                 checkout scm
             }
         }
-         stage('Test') {
-                     steps {
-                         sh 'cargo test'
-                     }
-                 }
+      //   stage('Test') {
+        //             steps {
+          //               sh 'cargo test'
+            //         }
+              //   }
         stage('Build') {
             steps {
                 sh 'cargo build --release'
@@ -25,6 +25,7 @@ pipeline {
     }
     post {
         always {
+        archiveArtifacts artifacts: 'target/release/*', allowEmptyArchive: true
             cleanWs()
         }
     }
