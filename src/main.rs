@@ -36,7 +36,7 @@ fn main() {
 
     // Parse command-line arguments
     let matches = Command::new("trashcan")
-        .version("1.0.1")
+        .version("1.0.2")
         .author("Laurenz Schmidt")
         .about("rm replacement with safe deletion")
         .override_usage("trashcan [FLAGS] <FILES>...")
