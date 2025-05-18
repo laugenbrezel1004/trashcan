@@ -64,7 +64,6 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'Building software...'
                 sh 'cargo build --release'
             }
         }
@@ -77,7 +76,6 @@ pipeline {
 
         stage('Create GitHub Release') {
             steps {
-                sh 'Deploying to guthib...'
                 retry(3) {
                     createGitHubRelease(
                         credentialId: 'github-pat',
