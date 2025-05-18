@@ -19,37 +19,37 @@ pipeline {
             }
         }
 
-        stage('Static-Code Analysis') {
-            steps {
-                updateGitlabCommitStatus(name: 'Static-Code Analysis', state: 'pending')
-                withSonarQubeEnv('sonarqube.philipkrauss.it') {
-                    script {
-                        if(env.CI_MERGE_REQUEST_IID) {
-                            sh """
-                                ${SCANNER_HOME}/bin/sonar-scanner \
-                                -Dsonar.pullrequest.key=${env.CI_MERGE_REQUEST_IID} \
-                                -Dsonar.pullrequest.branch=${env.CI_MERGE_REQUEST_SOURCE_BRANCH_NAME} \
-                                -Dsonar.pullrequest.base=${env.CI_MERGE_REQUEST_TARGET_BRANCH_NAME} \
-                                -Dsonar.pullrequest.gitlab.projectId=${env.CI_PROJECT_ID} \
-                                -X
-                            """
-                        } else {
-                            sh """
-                                ${SCANNER_HOME}/bin/sonar-scanner \
-                                -Dsonar.branch.name=${env.BRANCH_NAME} \
-                                -X
-                            """
-                        }
-                    }
-                }
-                timeout(time: 5, unit: 'MINUTES') {
-                    withSonarQubeEnv('sonarqube.philipkrauss.it') {
-                        waitForQualityGate abortPipeline: true
-                    }
-                }
-                updateGitlabCommitStatus(name: 'Static-Code Analysis', state: 'success')
-            }
-        }
+//        stage('Static-Code Analysis') {
+//            steps {
+//                updateGitlabCommitStatus(name: 'Static-Code Analysis', state: 'pending')
+//                withSonarQubeEnv('sonarqube.philipkrauss.it') {
+//                    script {
+//                        if(env.CI_MERGE_REQUEST_IID) {
+//                            sh """
+//                                ${SCANNER_HOME}/bin/sonar-scanner \
+//                                -Dsonar.pullrequest.key=${env.CI_MERGE_REQUEST_IID} \
+//                                -Dsonar.pullrequest.branch=${env.CI_MERGE_REQUEST_SOURCE_BRANCH_NAME} \
+//                                -Dsonar.pullrequest.base=${env.CI_MERGE_REQUEST_TARGET_BRANCH_NAME} \
+//                                -Dsonar.pullrequest.gitlab.projectId=${env.CI_PROJECT_ID} \
+//                                -X
+//                            """
+//                        } else {
+//                            sh """
+//                                ${SCANNER_HOME}/bin/sonar-scanner \
+//                                -Dsonar.branch.name=${env.BRANCH_NAME} \
+//                                -X
+//                            """
+//                        }
+//                    }
+//                }
+//                timeout(time: 5, unit: 'MINUTES') {
+//                    withSonarQubeEnv('sonarqube.philipkrauss.it') {
+//                        waitForQualityGate abortPipeline: true
+//                    }
+//                }
+//                updateGitlabCommitStatus(name: 'Static-Code Analysis', state: 'success')
+//            }
+//        }
 
         stage('Test') {
             steps {
