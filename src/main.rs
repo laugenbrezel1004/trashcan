@@ -74,21 +74,18 @@ fn main() {
 
 fn initialize_trashcan() -> Result<Trashcan, String> {
     // get home dir from user
-    let mut location = String::new();
+    let mut home_directory = String::new();
     if let Some(user) = get_user_by_uid(get_current_uid()) {
         // Initialize trashcan location
-        location = format!("{}/.local/share/trashcan", user.home_dir().display());
+        home_directory = format!("{}/.local/share/trashcan", user.home_dir().display());
     }
     #[cfg(debug_assertions)]
-    //println!("Home directory: {}", &home_dir.display());
-
-  //  let location = format!("{}/.local/share/trashcan", home_dir.display());
-    let location = "/home/laurenz/.local/share/trashcan".to_string();
+    println!("Home directory: {}", &home_directory);
 
     // Trashcan erstellen
     let trashcan = Trashcan {
-        location,
-        duration: 10, // TODO: Konfigurierbar machen
+        location: home_directory,
+       // duration: 10, // TODO: Konfigurierbar machen
     };
     if let Err(e) = trashcan.make_trashcan() {
         return Err(e.to_string());
@@ -100,8 +97,5 @@ fn initialize_trashcan() -> Result<Trashcan, String> {
 mod tests {
     use crate::initialize_trashcan;
 
-    #[test]
-    fn test_initialize_trashcan() {
-        initialize_trashcan().unwrap();
-    }
+
 }

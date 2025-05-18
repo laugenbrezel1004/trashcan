@@ -1,17 +1,17 @@
 use std::fs;
 use std::process;
 
-// hier noch mehr werte definieren, soll auch Umgebungsvarialben und .config gelesen werden
+// hier noch mehr werte definieren, soll auch Umgebungsvariablen und.config gelesen werden
 pub struct Trashcan {
     pub location: String,
-    pub duration: u8,
+    //pub duration: u8,
 }
 impl Trashcan {
     pub fn make_trashcan(&self) -> Result<(), String> {
         #[cfg(debug_assertions)]
         println!("make trashcan");
         if let Err(e) = fs::create_dir(&self.location) {
-            // wenn verzeichnis schon vorhanden ist soll dieser schritt einfach geskipt werden
+            // wenn verzeichnis schon vorhanden ist, soll dieser schritt einfach geskippt werden
             if e.kind() != std::io::ErrorKind::AlreadyExists {
                 let error = format!("{} {}", "trashcan: cant create trashcan directory -> {}\nYou should check your trashcan directory and make sure that it can be created at valid point".to_string(), &self.location);
                 return Err(error);

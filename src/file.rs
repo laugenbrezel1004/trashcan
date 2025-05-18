@@ -35,3 +35,21 @@ pub fn nuke_file(argument: &str) {
         eprintln!("trashcan: cannot remove '{}': {}", argument, e);
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+
+    #[test]
+    fn test_check_existence() {
+        let file = "/mnt/projects/trashcan/testfile.txt".to_string();
+        assert!(check_existence(&file));
+    }
+
+    #[test]
+    fn test_move_file_to_trashcan() {
+        let file_path = "test_file.txt";
+        let trashcan_path = 12;
+    }
+}

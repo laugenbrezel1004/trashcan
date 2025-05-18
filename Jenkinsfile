@@ -53,18 +53,16 @@ pipeline {
 
         stage('Test') {
             steps {
-                parallel(
-                    "Unit Tests": {
-                        script {
-                            sh 'cargo test -- --nocapture --test-threads=1'
-                        }
-                    },
                     "Linting": {
                         script {
                             sh 'cargo clippy --all-targets --all-features -- -D warnings'
                         }
+                    },
+                    "Unit Tests": {
+                        script {
+                            sh 'cargo test -- --nocapture --test-threads=1'
+                        }
                     }
-                )
             }
         }
 
