@@ -58,7 +58,7 @@ pipeline {
                 //sh 'cargo clippy --all-targets --all-features -- -D warnings'
                 // d warnings exits if any kind of warning is found
                 sh 'cargo clippy --all-targets --all-features'
-                sh 'cargo test -- --nocapture'
+                sh 'cargo test'
             }
         }
 
