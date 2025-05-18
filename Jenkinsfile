@@ -88,7 +88,7 @@ pipeline {
                                repository: 'laugenbrezel1004/trashcan',
                                tagName: "${RELEASE_TAG}",
                                uploadAssets: [
-                                       [filePath: 'trashcan']
+                                       [filePath: 'target/release/trashcan']
                                ]
                        )
                    }
