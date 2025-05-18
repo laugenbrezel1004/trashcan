@@ -135,7 +135,7 @@ Love `trashcan`? Hate it? Either way, help make it better! Fork the repo, open i
 **Code of Conduct**: Be kind, like you’re explaining Rust to your grandma. We follow the [Rust Code of Conduct](https://www.rust-lang.org/conduct.html).
 
 ## 📜 License
-MIT License. Free as in “free pizza,” but you still have to clean up your own messes. See [LICENSE](LICENSE) for details.
+Nothing... yet
 
 ## ⚠️ Disclaimer (Yes, Again)
 This is a learning project. It’s not your personal data bodyguard. If you delete your wedding photos or your company’s database, don’t send me angry emails. **Always back up your data.**
@@ -150,8 +150,7 @@ This is a learning project. It’s not your personal data bodyguard. If you dele
 - **Permission Checks**: Warn about files you can’t delete due to permissions.
 
 ## 🎤 Acknowledgments
-- **Laurenz Schmidt**: The original trashcan visionary.
-- **Rust Community**: For making me cry and learn at the same time.
+- **Laugenbrezel1004**: The original trashcan visionary.
 - **You**: For reading this far. You’re the real MVP.
 
 ## 💬 Final Words
