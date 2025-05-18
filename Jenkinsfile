@@ -2,14 +2,13 @@ pipeline {
     agent {
         docker {
             image 'rust:latest'
-            //args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
         }
     }
 
     environment {
-        GITHUB_TOKEN = credentials('github-pat') // Jenkins Credential ID for the PAT
-        GITHUB_REPO = 'laugenbrezel1004/trashcan' //
-        RELEASE_TAG = "v1.0.${env.BUILD_NUMBER}" // Dynamic tag, e.g., v1, v2, ...
+        GITHUB_TOKEN = credentials('github-pat')
+        GITHUB_REPO = 'laugenbrezel1004/trashcan'
+        RELEASE_TAG = "v1.0.${env.BUILD_NUMBER}"
     }
 
     stages {
@@ -19,8 +18,7 @@ pipeline {
             }
         }
 
-
-stage('Static-Code Analysis') {
+        stage('Static-Code Analysis') {
             steps {
                 updateGitlabCommitStatus(name: 'Static-Code Analysis', state: 'pending')
                 withSonarQubeEnv('sonarqube.philipkrauss.it') {
@@ -50,62 +48,57 @@ stage('Static-Code Analysis') {
                 }
                 updateGitlabCommitStatus(name: 'Static-Code Analysis', state: 'success')
             }
-stage('Test') {
-       steps {
-               parallel(
-                   "Unit Tests": {
-                       script {
-                           sh 'cargo test -- --nocapture --test-threads=1'
-                           // Optional: Generate JUnit report
-                           // sh 'cargo test -- -Z unstable-options --format json | cargo2junit > test-report.xml'
-                       }
-                   },
-                   "Linting": {
-                       script {
-                           sh 'cargo clippy --all-targets --all-features -- -D warnings'
-                       }
-                   }
-               )
-           }
-       }
+        }
 
-       stage('Build') {
-           steps {
-               sh 'cargo build --release'
-           }
-       }
+        stage('Test') {
+            steps {
+                parallel(
+                    "Unit Tests": {
+                        script {
+                            sh 'cargo test -- --nocapture --test-threads=1'
+                        }
+                    },
+                    "Linting": {
+                        script {
+                            sh 'cargo clippy --all-targets --all-features -- -D warnings'
+                        }
+                    }
+                )
+            }
+        }
 
-       stage('Archive') {
-           steps {
-               archiveArtifacts artifacts: 'target/release/*', allowEmptyArchive: true
-           }
-       }
+        stage('Build') {
+            steps {
+                sh 'cargo build --release'
+            }
+        }
 
-       stage('Create GitHub Release') {
-           steps {
-               retry(3) {
-                   createGitHubRelease(
-                       credentialId: 'github-pat',
-                       repository: 'laugenbrezel1004/trashcan',
-                       tag: "${RELEASE_TAG}",
-                       commitish: 'main'
-                   )
-               }
-           }
-       }
-   }
+        stage('Archive') {
+            steps {
+                archiveArtifacts artifacts: 'target/release/*', allowEmptyArchive: true
+            }
+        }
 
-   post {
-       always {
-           // Optional: Publish test reports
-           // junit 'test-report.xml'
-           echo 'Tests and Linting finished.'
-       }
-       failure {
-           echo 'Test or Linting failed, aborting Pipeline'
-           // Optional: Add notification
-           // slackSend channel: '#ci', message: "Build ${env.BUILD_NUMBER} failed!"
-       }
-   }
-}
+        stage('Create GitHub Release') {
+            steps {
+                retry(3) {
+                    createGitHubRelease(
+                        credentialId: 'github-pat',
+                        repository: 'laugenbrezel1004/trashcan',
+                        tag: "${RELEASE_TAG}",
+                        commitish: 'main'
+                    )
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Tests and Linting finished.'
+        }
+        failure {
+            echo 'Test or Linting failed, aborting Pipeline'
+        }
+    }
 }
