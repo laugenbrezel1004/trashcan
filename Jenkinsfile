@@ -74,25 +74,34 @@ pipeline {
             }
         }
 
-        stage('Create GitHub Release') {
-                   steps {
-                       createGitHubRelease(
-                           credentialId: 'github-pat', // ID of the GitHub Personal Access Token
-                           repository: 'laugenbrezel1004/trashcan', // Your repository
-                           tag: "${RELEASE_TAG}", // Tag for the release
-                           commitish: 'main', // Branch or commit SHA
-                           //assets: 'target/release/trashcan'
-                       )
-                       uploadGithubReleaseAsset(
-                               credentialId: 'github-pat',
-                               repository: 'laugenbrezel1004/trashcan',
-                               tagName: "${RELEASE_TAG}",
-                               uploadAssets: [
-                                       [filePath: 'target/release/trashcan']
-                               ]
-                       )
-                   }
-        }
+
+                 stage('Create GitHub Release') {
+                     steps {
+                         script {
+                             // Extrahiere die Version aus Cargo.toml
+                             def version = sh(script: "grep '^version' Cargo.toml | cut -d '\"' -f 2", returnStdout: true).trim()
+                             echo "Version: ${version}"
+                             // Erstelle den GitHub-Release
+                             createGitHubRelease(
+                                 credentialId: 'github-pat', // ID des GitHub Personal Access Tokens
+                                 repository: 'laugenbrezel1004/trashcan', // Dein Repository
+                                 tag: "v${version}", // Tag für den Release (z. B. v0.1.0)
+                                 commitish: 'main', // Branch oder Commit-SHA
+                                 //assets: 'target/release/trashcan' // Optional, falls direkt hier hochgeladen
+                             )
+                             // Lade das Asset hoch
+                             uploadGithubReleaseAsset(
+                                 credentialId: 'github-pat',
+                                 repository: 'laugenbrezel1004/trashcan',
+                                 tagName: "v${version}",
+                                 uploadAssets: [
+                                     [filePath: 'target/release/trashcan']
+                                 ]
+                             )
+                         }
+                     }
+                 }
+
     } //stages
 
     post {

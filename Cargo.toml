@@ -1,6 +1,6 @@
 [package]
 name = "trashcan"
-version = "1.0.1"
+version = "1.0.40"
 edition = "2024"
 
 [dependencies]

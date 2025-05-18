@@ -16,7 +16,7 @@ impl Trashcan {
                 let error = format!("{} {}", "trashcan: cant create trashcan directory -> {}\nYou should check your trashcan directory and make sure that it can be created at valid point".to_string(), &self.location);
                 return Err(error);
             }
-            return Err("directory already exists".to_string());
+            return Ok(()); //directory already exists
         }
         Ok(())
     }

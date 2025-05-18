@@ -11,7 +11,6 @@ use users::{get_current_uid, get_user_by_uid};
 
 #[cfg(target_os = "linux")]
 fn main() {
-    println!("ficken");
     let trashcan: Trashcan;
     // Trashcan initialisieren
     match initialize_trashcan() {
@@ -26,7 +25,7 @@ fn main() {
     }
     // Kommandozeilenargumente parsen
     let matches = Command::new("trashcan")
-        .version("1.0.2")
+        .version(env!("CARGO_PKG_VERSION"))
         .author("Laurenz Schmidt")
         .about("rm replacement with safe deletion")
         .arg(
