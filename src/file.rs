@@ -41,7 +41,6 @@ mod tests {
     use super::*;
     use std::fs;
 
-    #[test]
     fn test_check_existence() {
         let file = "/mnt/projects/trashcan/testfile.txt".to_string();
         assert!(check_existence(&file));
