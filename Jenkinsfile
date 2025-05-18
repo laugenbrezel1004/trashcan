@@ -53,7 +53,6 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'Testing software...'
                 sh 'cargo clippy --all-targets --all-features -- -D warnings'
                 sh 'cargo test -- --nocapture'
             }
