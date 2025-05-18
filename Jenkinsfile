@@ -12,10 +12,16 @@ pipeline {
         RELEASE_TAG = "v1.0.${env.BUILD_NUMBER}"
     }
 
+
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
+            }
+        }
+        stage('rust') {
+            steps {
+                sh 'rustup component add clippy'
             }
         }
 
