@@ -93,6 +93,7 @@ pipeline {
                        )
                    }
         }
+    } //stages
 
     post {
         always {
