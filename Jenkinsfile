@@ -50,60 +50,61 @@ stage('Static-Code Analysis') {
                 }
                 updateGitlabCommitStatus(name: 'Static-Code Analysis', state: 'success')
             }
-            stage('Test') {
-                steps {
-                    // Parallele Ausführung von Tests und Linting, um Zeit zu sparen
-                    parallel(
-                        "Unit Tests": {
-                            script {
-                                // Führe Tests aus und zeige Ausgabe direkt an
-                                sh 'cargo test -- --nocapture --test-threads=1'
-                                // Optional: JUnit-Bericht generieren (benötigt ein Tool wie cargo2junit)
-                                // sh 'cargo test -- -Z unstable-options --format json | cargo2junit > test-report.xml'
-                            }
-                        },
-                        "Linting": {
-                            script {
-                                // Führe Clippy aus und behandle Warnungen als Fehler
-                                sh 'cargo clippy --all-targets --all-features -- -D warnings'
-                            }
-                        }
-                    )
-                }
-        stage('build') {
-            steps {
-                sh 'cargo build --release'
-            }
-        }
+stage('Test') {
+       steps {
+               parallel(
+                   "Unit Tests": {
+                       script {
+                           sh 'cargo test -- --nocapture --test-threads=1'
+                           // Optional: Generate JUnit report
+                           // sh 'cargo test -- -Z unstable-options --format json | cargo2junit > test-report.xml'
+                       }
+                   },
+                   "Linting": {
+                       script {
+                           sh 'cargo clippy --all-targets --all-features -- -D warnings'
+                       }
+                   }
+               )
+           }
+       }
 
-        stage('Archive') {
-            steps {
-                archiveArtifacts artifacts: 'target/release/*', allowEmptyArchive: true
-            }
-        }
+       stage('Build') {
+           steps {
+               sh 'cargo build --release'
+           }
+       }
 
-  stage('Create GitHub Release') {
-      steps {
-          retry(3) {
-              createGitHubRelease(
-                  credentialId: 'github-pat',
-                  repository: 'laugenbrezel1004/trashcan',
-                  tag: "${RELEASE_TAG}",
-                  commitish: 'main'
-              )
-          }
-      }
-  }
-    }
+       stage('Archive') {
+           steps {
+               archiveArtifacts artifacts: 'target/release/*', allowEmptyArchive: true
+           }
+       }
 
-    post {
-            always {
-                // Optional: Testberichte in Jenkins anzeigen (falls JUnit-Bericht generiert wurde)
-                // junit 'test-report.xml'
-                echo 'Tests and Linting finished.'
-            }
-            failure {
-                echo 'Test or Linting failed, aborting Pipeline'
-            }
-        }
+       stage('Create GitHub Release') {
+           steps {
+               retry(3) {
+                   createGitHubRelease(
+                       credentialId: 'github-pat',
+                       repository: 'laugenbrezel1004/trashcan',
+                       tag: "${RELEASE_TAG}",
+                       commitish: 'main'
+                   )
+               }
+           }
+       }
+   }
+
+   post {
+       always {
+           // Optional: Publish test reports
+           // junit 'test-report.xml'
+           echo 'Tests and Linting finished.'
+       }
+       failure {
+           echo 'Test or Linting failed, aborting Pipeline'
+           // Optional: Add notification
+           // slackSend channel: '#ci', message: "Build ${env.BUILD_NUMBER} failed!"
+       }
+   }
 }
