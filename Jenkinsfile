@@ -92,7 +92,7 @@ pipeline {
                                ]
                        )
                    }
-    }
+        }
 
     post {
         always {
