@@ -75,17 +75,23 @@ pipeline {
         }
 
         stage('Create GitHub Release') {
-            steps {
-                retry(3) {
-                    createGitHubRelease(
-                        credentialId: 'github-pat',
-                        repository: 'laugenbrezel1004/trashcan',
-                        tag: "${RELEASE_TAG}",
-                        commitish: 'main'
-                    )
-                }
-            }
-        }
+                   steps {
+                       createGitHubRelease(
+                           credentialId: 'github-pat', // ID of the GitHub Personal Access Token
+                           repository: 'laugenbrezel1004/trashcan', // Your repository
+                           tag: "${RELEASE_TAG}", // Tag for the release
+                           commitish: 'main', // Branch or commit SHA
+                           //assets: 'target/release/trashcan'
+                       )
+                       uploadGithubReleaseAsset(
+                               credentialId: 'github-pat',
+                               repository: 'laugenbrezel1004/trashcan',
+                               tagName: "${RELEASE_TAG}",
+                               uploadAssets: [
+                                       [filePath: 'target/release/trashcan']
+                               ]
+                       )
+                   }
     }
 
     post {
