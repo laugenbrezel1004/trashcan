@@ -53,21 +53,15 @@ pipeline {
 
         stage('Test') {
             steps {
-                    "Linting": {
-                        script {
-                            sh 'cargo clippy --all-targets --all-features -- -D warnings'
-                        }
-                    },
-                    "Unit Tests": {
-                        script {
-                            sh 'cargo test -- --nocapture --test-threads=1'
-                        }
-                    }
+                sh 'Testing software...'
+                sh 'cargo clippy --all-targets --all-features -- -D warnings'
+                sh 'cargo test -- --nocapture'
             }
         }
 
         stage('Build') {
             steps {
+                sh 'Building software...'
                 sh 'cargo build --release'
             }
         }
@@ -80,6 +74,7 @@ pipeline {
 
         stage('Create GitHub Release') {
             steps {
+                sh 'Deploying to guthib...'
                 retry(3) {
                     createGitHubRelease(
                         credentialId: 'github-pat',
