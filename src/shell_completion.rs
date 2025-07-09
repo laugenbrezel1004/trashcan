@@ -1,18 +1,14 @@
-use clap::{Command, Arg, ValueHint, value_parser, ArgAction};
-use clap_complete::aot::{generate, Generator, Shell};
+use clap::{Command, Arg};
+use clap_complete::{generate, shells, Shell};
 use std::io;
 
-fn build_cli() -> Command {
-    Command::new("example")
-        .arg(Arg::new("file")
-            .help("some input file")
-            .value_hint(ValueHint::AnyPath))
-        .arg(Arg::new("generator")
-            .long("generate")
-            .action(ArgAction::Set)
-            .value_parser(value_parser!(Shell)))
-}
-
-fn print_completions<G: Generator>(generator: G, cmd: &mut Command) {
-    generate(generator, cmd, cmd.get_name().to_string(), &mut io::stdout());
+pub fn build_cli() -> Command {
+    Command::new("meinprogramm")
+        .about("Beispiel für clap_completion")
+        .subcommand(Command::new("completions")
+            .about("Generiert Shell-Completion-Skripte")
+            .arg(Arg::new("SHELL")
+                .help("Die Ziel-Shell")
+                .required(true)
+                .value_parser(["bash", "zsh", "fish", "powershell", "elvish"])))
 }
