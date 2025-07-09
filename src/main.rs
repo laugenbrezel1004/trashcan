@@ -18,6 +18,7 @@ use users::{get_current_uid, get_user_by_uid};
 // TODO: letzte datei wiederherstellen
 // TODO: autocompletion in cmd
 
+#[allow(clippy::style)]
 #[cfg(target_os = "linux")]
 fn main() {
     // Trashcan initialisieren
