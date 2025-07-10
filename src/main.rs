@@ -2,17 +2,13 @@
 
 mod file;
 mod trashcan;
-mod shell_completion;
+mod flags;
 
-use std::io;
 use crate::file::{move_file_to_trashcan, nuke_file};
-use crate::trashcan::Trashcan;
+use crate::trashcan::core::Trashcan;
 use clap::{Arg, ArgAction, Command};
-use clap_complete::{generate, Shell};
 use users::os::unix::UserExt;
 use users::{get_current_uid, get_user_by_uid};
-use crate::shell_completion::{build_cli};
-use io::stdout;
 // TODO: Check file permission -> fehler ausgeben | wichtig wenn eigene implementation ohne "mv"
 // TODO:config file
 // TODO:umgebugnsvariablen?
@@ -25,16 +21,10 @@ use io::stdout;
 #[cfg(target_os = "linux")]
 fn main() {
     #[cfg(debug_assertions)]
-    let matches = shell_completion::build_cli().get_matches();
 
-    if let Some(completions) = matches.subcommand_matches("completions") {
-        let shell = completions.get_one::<String>("SHELL").unwrap();
-        let shell: Shell = shell.parse().unwrap();
-        generate(shell, &mut build_cli(), "trashcat dn", &mut io::stdout());
-        return;
-    }
+
     // Trashcan initialisieren
-    match initialize_trashcan() {
+    match trashcan::core::Trashcan.new(){
         Ok(trash) => {
             check_flags(trash);
         }
@@ -109,7 +99,7 @@ fn check_flags(trashcan: Trashcan) {
                     move_file_to_trashcan(file, &trashcan.location);
                 }
             } else {
-                eprintln!("File not found: {}", file);
+                eprintln!("File not found: {file}");
             }
         }
     }
