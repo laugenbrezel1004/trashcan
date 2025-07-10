@@ -5,7 +5,6 @@ mod flags;
 mod trashcan;
 
 use crate::file::{move_file_to_trashcan, nuke_file};
-use crate::trashcan::core::Trashcan;
 use clap::{Arg, ArgAction, Command};
 use users::os::unix::{UserExt};
 use users::{get_current_uid, get_user_by_uid, User};
