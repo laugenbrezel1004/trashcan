@@ -1,8 +1,9 @@
 use clap::{Arg, ArgAction, Command};
 use crate::{file, trashcan};
 use crate::file::{move_file_to_trashcan, nuke_file};
+use crate::trashcan::core::Trashcan;
 
-pub fn check_flags() {
+pub fn check_flags(trashcan: Result<Trashcan, String>) -> Result<(), String> {
     // Kommandozeilenargumente parsen
     let matches = Command::new("trashcan")
         .version(env!("CARGO_PKG_VERSION"))

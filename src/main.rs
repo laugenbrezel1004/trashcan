@@ -18,17 +18,15 @@ TODO: autocompletion in cmd
 TODO: mv mit "guten" code ersetzen
 */
 
-#[allow(clippy::style)]
 #[cfg(target_os = "linux")]
 fn main() {
     //get a trashcan
     // get trashcandir based on the USER
     // create trashcandir based on the USER
     // Trashcan initialisieren
-    if let Err(error) = trashcan::core::initialize_trashcan(){
-        eprintln!("trashcan: {}", error);
+    // move on with checking the flags via clap lib
+    if let Err(e) = flags::core::check_flags(trashcan::core::initialize_trashcan()){
+        eprintln!("trashcan: cannot check flags {e}");
         std::process::exit(1);
     }
-    // move on with checking the flags via clap lib
-    flags::core::check_flags();
 }
