@@ -1,9 +1,9 @@
-use clap::{Arg, ArgAction, Command};
-use crate::{file, trashcan};
 use crate::file::{move_file_to_trashcan, nuke_file};
 use crate::trashcan::core::Trashcan;
+use crate::{file, trashcan};
+use clap::{Arg, ArgAction, Command};
 
-pub fn check_flags(trashcan: Result<Trashcan, String>) -> Result<(), String> {
+pub fn check_flags(trashcan: Trashcan) -> Result<(), String> {
     // Kommandozeilenargumente parsen
     let matches = Command::new("trashcan")
         .version(env!("CARGO_PKG_VERSION"))
@@ -33,21 +33,10 @@ pub fn check_flags(trashcan: Result<Trashcan, String>) -> Result<(), String> {
     // Aktionen ausführen
     if matches.get_flag("trashcan") {
         //TODO: Feherl behandeln
-        trashcan::core::nuke_trashcan();
+        trashcan.nuke_trashcan_directory()?
     } else if matches.get_flag("show-trashcan") {
         //TODO: Feherl behandeln
-        trashcan::core::show_trashcan();
-    } else if let Some(files) = matches.get_many::<String>("files") {
-        for file in files {
-            if file::check_existence(file) {
-                if matches.get_flag("nuke") {
-                    nuke_file(file);
-                } else if matches.get_flag("files") {
-                    move_file_to_trashcan(file, &trashcan::core::TRASHCAN_DIRECTORY);
-                }
-            } else {
-                eprintln!("File not found: {file}");
-            }
-        }
+        trashcan.show_trashcan()?
     }
+    Ok(())
 }

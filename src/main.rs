@@ -6,8 +6,8 @@ mod trashcan;
 
 use crate::file::{move_file_to_trashcan, nuke_file};
 use clap::{Arg, ArgAction, Command};
-use users::os::unix::{UserExt};
-use users::{get_current_uid, get_user_by_uid, User};
+use users::os::unix::UserExt;
+use users::{User, get_current_uid, get_user_by_uid};
 /*
 TODO: Check file permission -> fehler ausgeben | wichtig wenn eigene implementation ohne "mv"
 TODO:config file
@@ -25,7 +25,15 @@ fn main() {
     // create trashcandir based on the USER
     // Trashcan initialisieren
     // move on with checking the flags via clap lib
-    if let Err(e) = flags::core::check_flags(trashcan::core::initialize_trashcan()){
+    let trashcan = trashcan::core::initialize_trashcan();
+    let trashcan = match trashcan {
+        Ok(trashcan) => trashcan,
+        Err(e) => {
+            eprintln!("trashcan error: {e}");
+            std::process::exit(1);
+        }
+    };
+    if let Err(e) = flags::core::check_flags(trashcan) {
         eprintln!("trashcan: cannot check flags {e}");
         std::process::exit(1);
     }
