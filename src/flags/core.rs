@@ -3,7 +3,7 @@ use crate::file;
 use crate::file::{move_file_to_trashcan, nuke_file};
 use crate::trashcan::core::Trashcan;
 
-fn check_flags(trashcan: Trashcan) {
+pub fn check_flags() {
     // Kommandozeilenargumente parsen
     let matches = Command::new("trashcan")
         .version(env!("CARGO_PKG_VERSION"))

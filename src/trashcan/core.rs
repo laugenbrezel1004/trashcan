@@ -8,7 +8,7 @@ pub struct Trashcan {
 }
 
 
-pub fn initialize_trashcan() -> Result<Trashcan, String> {
+pub fn initialize_trashcan() -> Result<(), String> {
     // get home dir from user
     let mut home_directory = String::new();
     if let Some(user) = get_user_by_uid(get_current_uid()) {
