@@ -11,7 +11,7 @@ services:
     ports:
       - "8080:8080"
       - "50000:50000"
-    restart: unless-stopped
+    restart: always
 
 volumes:
   jenkins_home:
