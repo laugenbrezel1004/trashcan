@@ -1,13 +1,8 @@
 // src/main.rs
 
-mod file;
 mod flags;
 mod trashcan;
 
-use crate::file::{move_file_to_trashcan, nuke_file};
-use clap::{Arg, ArgAction, Command};
-use users::os::unix::UserExt;
-use users::{User, get_current_uid, get_user_by_uid};
 /*
 TODO: Check file permission -> fehler ausgeben | wichtig wenn eigene implementation ohne "mv"
 TODO:config file
