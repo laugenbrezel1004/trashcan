@@ -1,61 +1,20 @@
 services:
-
-
-  # SonarQube (sonarqube.philipkrauss.it)
-  sonarqube:
-    image: mc1arke/sonarqube-with-community-branch-plugin
-    container_name: sonarqube
-    restart: always
-    ports: 
-      - "9000:9000"
-    environment:
-      SONAR_JDBC_URL: "jdbc:postgresql://sonarqube-db:5432/sonar"
-      SONAR_JDBC_USERNAME: "sonar"
-      SONAR_JDBC_PASSWORD: "sonar"
-    volumes:
-      - sonarqube_data:/opt/sonarqube/data
-      - sonarqube_extensions:/opt/sonarqube/extensions
-      - sonarqube_logs:/opt/sonarqube/logs
-    depends_on:
-      - sonarqube-db
-
-  sonarqube-db:
-    image: postgres:13
-    container_name: sonarqube-db
-    restart: always
-    environment:
-      POSTGRES_USER: sonar
-      POSTGRES_PASSWORD: sonar
-      POSTGRES_DB: sonar
-    volumes:
-      - sonarqube_db_data:/var/lib/postgresql/data
-
-  # Jenkins (jenkins.philipkrauss.it)
-  # - proxy-network
-  #
-
   jenkins:
-    # image: registry.philipkrauss.it/jenkins-docker:lts
-    container_name: jenkins
-    restart: always
-    ports: 
-      - "8080:8080"
-      - "5000:5000"
     build:
       context: .
       dockerfile: Dockerfile
+    image: my-jenkins:with-docker
+    container_name: jenkins
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock  # Mount Docker socket for executing Docker commands
-      - jenkins_data:/var/jenkins_home
-  
- 
-
+      - /var/run/docker.sock:/var/run/docker.sock
+      - jenkins_home:/var/jenkins_home
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+    restart: unless-stopped
 
 volumes:
-  sonarqube_data:
-  sonarqube_extensions:
-  sonarqube_logs:
-  sonarqube_db_data:
-
-  jenkins_data:
-
+  jenkins_home:
+    name: jenkins_home
