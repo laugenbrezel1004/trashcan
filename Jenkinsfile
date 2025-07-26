@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        GITHUB_TOKEN = credentials('github-pat')
+        GITHUB_TOKEN = credentials('github')
         GITHUB_REPO = 'laugenbrezel1004/trashcan'
         RELEASE_TAG = "v1.0.${env.BUILD_NUMBER}"
     }
