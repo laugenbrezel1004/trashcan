@@ -19,21 +19,17 @@ TODO: mv mit "guten" code ersetzen
 */
 
 #[cfg(target_os = "linux")]
+#[cfg(target_arch = "x86_64")]
 fn main() {
-    //get a trashcan
-    // get trashcandir based on the USER
-    // create trashcandir based on the USER
-    // Trashcan initialisieren
-    // move on with checking the flags via clap lib
-    let trashcan = trashcan::core::initialize_trashcan();
-    let trashcan = match trashcan {
+
+    let trashcan = match trashcan::core::initialize_trashcan() {
         Ok(trashcan) => trashcan,
         Err(e) => {
             eprintln!("trashcan error: {e}");
             std::process::exit(1);
         }
     };
-    if let Err(e) = flags::core::check_flags(trashcan) {
+    if let Err(e) = flags::core::check_flags(&trashcan, flags::core::parse_args()) {
         eprintln!("trashcan: cannot check flags {e}");
         std::process::exit(1);
     }
