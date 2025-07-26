@@ -83,7 +83,7 @@ pipeline {
                              echo "Version: ${version}"
                              // Erstelle den GitHub-Release
                              createGitHubRelease(
-                                 credentialId: 'github-pat', // ID des GitHub Personal Access Tokens
+                                 credentialId: 'github', // ID des GitHub Personal Access Tokens
                                  repository: 'laugenbrezel1004/trashcan', // Dein Repository
                                  tag: "v${version}", // Tag für den Release (z. B. v0.1.0)
                                  commitish: 'main', // Branch oder Commit-SHA
@@ -91,7 +91,7 @@ pipeline {
                              )
                              // Lade das Asset hoch
                              uploadGithubReleaseAsset(
-                                 credentialId: 'github-pat',
+                                 credentialId: 'github',
                                  repository: 'laugenbrezel1004/trashcan',
                                  tagName: "v${version}",
                                  uploadAssets: [
