@@ -24,7 +24,7 @@ pub fn initialize_trashcan() -> Result<(Trashcan), String> {
 impl Trashcan {
     fn create_trashcan_directory(&self) -> Result<(), String> {
         if let Err(error) = fs::create_dir(&self.trashcan_homedirectory_location) {
-            eprintln!("failed to create trashcan directory: {}", error);
+            eprintln!("trashcan: failed to create trashcan directory: {}", error);
         };
         Ok(())
     }
