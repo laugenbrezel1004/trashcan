@@ -9,4 +9,6 @@ RUN apt-get update -y && \
     apt-get update -y && \
     apt-get install -y docker-ce-cli
 
+RUN chmod 666 /var/run/docker.sock
+
 USER jenkins
