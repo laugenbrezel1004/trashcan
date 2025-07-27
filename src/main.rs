@@ -16,7 +16,7 @@ fn main() {
         }
     };
 
-    if let Err(e) = flags::process_flags(&trashcan, matches) {
+    if let Err(e) = flags::process_flags(&trashcan, &matches) {
         eprintln!("trashcan: {}", e);
         process::exit(1);
     }
