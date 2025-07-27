@@ -23,12 +23,11 @@ pub fn initialize_trashcan() -> Result<Trashcan, String> {
 }
 
 impl Trashcan {
-    /// Initializes the trashcan directory at `~/.local/share/trashcan`.
 
-    /// Creates the trashcan directory if it doesn't exist.
+    /// Initializes the trashcan directory at `~/.local/share/trashcan`.
     pub fn create_trashcan_directory(&self) -> Result<(), String> {
         fs::create_dir_all(&self.trashcan_homedirectory_location)
-            .map_err(|e| format!("failed to create trashcan directory: {}", e))?;
+            .map_err(|e| format!("failed to create trashcan directory: {e}"))?;
         Ok(())
     }
 
@@ -36,7 +35,7 @@ impl Trashcan {
     pub fn nuke_trashcan_directory(&self) -> Result<(), String> {
         if self.trashcan_homedirectory_location.exists() {
             fs::remove_dir_all(&self.trashcan_homedirectory_location)
-                .map_err(|e| format!("cannot clean trashcan directory: {}", e))?;
+                .map_err(|e| format!("cannot clean trashcan directory: {e}"))?;
             self.create_trashcan_directory()?;
         }
         Ok(())
@@ -45,15 +44,15 @@ impl Trashcan {
     /// Displays the contents of the trashcan with file details.
     pub fn show_trashcan(&self) -> Result<(), String> {
         let entries = fs::read_dir(&self.trashcan_homedirectory_location)
-            .map_err(|e| format!("cannot read trashcan directory: {}", e))?;
+            .map_err(|e| format!("cannot read trashcan directory: {e}"))?;
 
         for entry in entries {
-            let entry = entry.map_err(|e| format!("cannot read directory entry: {}", e))?;
+            let entry = entry.map_err(|e| format!("cannot read directory entry: {e}"))?;
             let file_name = entry.file_name().to_string_lossy().to_string();
-            let metadata = entry.metadata().map_err(|e| format!("cannot get metadata: {}", e))?;
+            let metadata = entry.metadata().map_err(|e| format!("cannot get metadata: {e}"))?;
             let size = metadata.len();
             let file_type = if metadata.is_dir() { "dir" } else { "file" };
-            println!("{} ({}: {} bytes)", file_name, file_type, size);
+            println!("{file_name} ({file_type}: {size} bytes)");
         }
         Ok(())
     }
@@ -62,12 +61,12 @@ impl Trashcan {
     pub fn move_file_to_trashcan(&self, file: &str) -> Result<(), String> {
         let path = Path::new(file);
         if !path.exists() {
-            return Err(format!("file '{}' does not exist", file));
+            return Err(format!("file '{file}' does not exist"));
         }
 
         let uuid = Uuid::new_v4().to_string();
         let dest = self.trashcan_homedirectory_location.join(&uuid);
-        fs::rename(path, &dest).map_err(|e| format!("failed to move file '{}': {}", file, e))?;
+        fs::rename(path, &dest).map_err(|e| format!("failed to move file '{file}': {e}"))?;
         Ok(())
     }
 
@@ -75,9 +74,9 @@ impl Trashcan {
     pub fn nuke_file(&self, file: &str) -> Result<(), String> {
         let path = Path::new(file);
         if path.is_dir() {
-            fs::remove_dir_all(path).map_err(|e| format!("cannot remove directory '{}': {}", file, e))?;
+            fs::remove_dir_all(path).map_err(|e| format!("cannot remove directory '{file}': {e}"))?;
         } else {
-            fs::remove_file(path).map_err(|e| format!("cannot remove file '{}': {}", file, e))?;
+            fs::remove_file(path).map_err(|e| format!("cannot remove file '{file}': {e}"))?;
         }
         Ok(())
     }
@@ -85,7 +84,7 @@ impl Trashcan {
     /// Restores the most recently deleted file from the trashcan.
     pub fn restore_last_file(&self) -> Result<(), String> {
         let mut entries: Vec<DirEntry> = fs::read_dir(&self.trashcan_homedirectory_location)
-            .map_err(|e| format!("cannot read trashcan directory: {}", e))?
+            .map_err(|e| format!("cannot read trashcan directory: {e}"))?
             .filter_map(Result::ok)
             .collect();
 
@@ -104,8 +103,8 @@ impl Trashcan {
         let file_name = latest.file_name().to_string_lossy().to_string();
         let dest = PathBuf::from(&file_name); // Restore to original name or current directory
         fs::rename(latest.path(), dest)
-            .map_err(|e| format!("cannot restore file '{}': {}", file_name, e))?;
-        println!("restored '{}'", file_name);
+            .map_err(|e| format!("cannot restore file '{file_name}': {e}"))?;
+        println!("restored '{file_name}'");
         Ok(())
     }
 }

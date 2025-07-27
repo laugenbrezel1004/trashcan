@@ -11,13 +11,13 @@ fn main() {
     let trashcan = match trashcan::initialize_trashcan() {
         Ok(trashcan) => trashcan,
         Err(e) => {
-            eprintln!("trashcan: initialization failed: {}", e);
+            eprintln!("trashcan: initialization failed: {e}");
             process::exit(1);
         }
     };
 
     if let Err(e) = flags::process_flags(&trashcan, &matches) {
-        eprintln!("trashcan: {}", e);
+        eprintln!("trashcan: {e}");
         process::exit(1);
     }
 }

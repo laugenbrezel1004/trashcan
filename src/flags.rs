@@ -69,7 +69,7 @@ pub fn process_flags(trashcan: &Trashcan, matches: &ArgMatches) -> Result<(), St
         for file in files {
             let path = Path::new(file);
             if !path.exists() {
-                return Err(format!("Datei '{}' existiert nicht", file));
+                return Err(format!("Datei '{file}' existiert nicht"));
             }
             if nuke {
                 trashcan.nuke_file(file)?;
