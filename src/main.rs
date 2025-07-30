@@ -1,10 +1,10 @@
 // src/main.rs
 mod cli;
-mod trashcan;
+pub mod trashcan;
 
-use std::process;
-use owo_colors::OwoColorize;
 use cli::Cli;
+use owo_colors::OwoColorize;
+use std::process;
 
 fn main() {
     let cli = Cli::new();

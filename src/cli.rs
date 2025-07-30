@@ -1,5 +1,5 @@
 // src/cli.rs
-use crate::trashcan::Trashcan;
+use crate::trashcan::core::Trashcan;
 use clap::{Arg, ArgAction, ArgMatches, Command};
 use owo_colors::OwoColorize;
 use std::path::Path;
@@ -74,15 +74,16 @@ impl Cli {
         if self.matches.get_flag("empty_trash") {
             self.empty_trash(&trashcan)
         } else if self.matches.get_flag("show_trashcan") {
-            self.show_trash(&trashcan)
+            trashcan.list_contents().map_err(|e| e.to_string())?;
+            Ok(())
         } else if self.matches.get_flag("restore") {
-            self.restore_file(&trashcan)
+            trashcan.restore_latest()?
         } else {
             self.handle_files(&trashcan)
         }
     }
 
-    fn empty_trash(&self, trashcan: &Trashcan) -> Result<(), String> {
+    fn empty_trash<>(&self, trashcan: &Trashcan) -> Result<(), String> {
         if self.matches.get_flag("interactive") {
             let answer = dialoguer::Confirm::new()
                 .with_prompt("Are you sure you want to empty the trashcan?")
@@ -100,15 +101,9 @@ impl Cli {
         Ok(())
     }
 
-    fn show_trash(&self, trashcan: &Trashcan) -> Result<(), String> {
-        trashcan.list_contents()
-    }
+  
 
-    fn restore_file(&self, trashcan: &Trashcan) -> Result<(), String> {
-        let restored = trashcan.restore_latest()?;
-        println!("{} {}", "✓ Restored:".green(), restored.cyan());
-        Ok(())
-    }
+
 
     fn handle_files(&self, trashcan: &Trashcan) -> Result<(), String> {
         let files = self.matches.get_many::<String>("files")
