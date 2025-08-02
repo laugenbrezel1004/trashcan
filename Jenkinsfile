@@ -44,35 +44,11 @@ pipeline {
                 script {
                     // Hole die aktuelle Version aus Cargo.toml
                     def newVersion = sh(script: "awk -F'\"' '/^version\\s*=\\s*\"/ {gsub(/\./, \"\", $2); print $2 + 1}' Cargo.toml", returnStdout: true).trim()                    echo "Cargo.toml Version: ${cargoVersion}"
-                    echo newVersion
+                    echo ${newVersion}
 
 
-                    // Falls keine Releases existieren, starte mit der Version aus Cargo.toml
-                    if (!latestTag || latestTag == 'null') {
-                        latestTag = "v${cargoVersion}"
-                    }
+           
 
-                    // Parse die aktuelle Versionsnummer (entferne 'v' falls vorhanden)
-                    def version = latestTag.startsWith('v') ? latestTag.replace('v', '') : latestTag
-                    def versionParts = version.split('\\.')
-                    def major = versionParts[0].toInteger()
-                    def minor = versionParts[1].toInteger()
-                    def patch = versionParts[2].toInteger()
-
-                    // Erhöhe die Patch-Version
-                    def newPatch = patch + 1
-                    def newVersion = "${major}.${minor}.${newPatch}"
-                    def newTag = "v${newVersion}"
-
-                    // Optional: Aktualisiere Cargo.toml mit der neuen Version
-                    sh """
-                        sed -i 's/version = "${cargoVersion}"/version = "${newVersion}"/' Cargo.toml
-                        git add Cargo.toml
-                        git commit -m "Bump version to ${newVersion}"
-                        git push
-                    """
-
-                    echo "Neue Versionsnummer: ${newTag}"
 
                     // Erstelle den GitHub-Release
                     createGitHubRelease(
