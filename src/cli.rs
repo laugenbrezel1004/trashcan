@@ -29,7 +29,7 @@ impl Cli {
                 )
                 .arg(
                     Arg::new("empty_trash")
-                        .long("empty-trash")
+                        .long("empty_trash")
                         .short('e')
                         .help("Empty the entire trashcan")
                         .action(ArgAction::SetTrue)
@@ -37,7 +37,7 @@ impl Cli {
                 )
                 .arg(
                     Arg::new("show_trashcan")
-                        .long("show-trashcan")
+                        .long("show_trashcan")
                         .short('l')
                         .help("Show contents of the trashcan")
                         .action(ArgAction::SetTrue)
@@ -73,11 +73,13 @@ impl Cli {
     pub fn run(&self) -> Result<(), String> {
         let trashcan = Trashcan::initialize()?;
 
+        
+        //empty
         if self.matches.get_flag("empty_trash") {
             if self.matches.get_flag("interactive") {
-                trashcan.empty(true)?;
+                trashcan.empty_trash(true)?;
             }
-            trashcan.empty(false)
+            trashcan.empty_trash(false)
         } else if self.matches.get_flag("show_trashcan") {
             self.show_trashcan_contents(&trashcan)
         } else if self.matches.get_flag("restore") {
