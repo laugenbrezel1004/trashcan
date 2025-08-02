@@ -38,7 +38,7 @@ pipeline {
 
         stage('Archive') {
             steps {
-                archiveArtifacts artifacts: 'target/release/*', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'target/release/trashcan', allowEmptyArchive: true
             }
         }
 
@@ -54,7 +54,7 @@ pipeline {
                          credentialId: 'github-pat', // ID des GitHub Personal Access Tokens
                          repository: 'laugenbrezel1004/trashcan', // Dein Repository
                          tag: "v${version}", // Tag für den Release (z. B. v0.1.0)
-                         commitish: 'main', // Branch oder Commit-SHA
+                        // commitish: 'main', // Branch oder Commit-SHA
                          //assets: 'target/release/trashcan' // Optional, falls direkt hier hochgeladen
                      )
                      // Lade das Asset hoch
