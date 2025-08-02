@@ -43,15 +43,9 @@ pipeline {
             steps {
                 script {
                     // Hole die aktuelle Version aus Cargo.toml
-                    def cargoVersion = sh(script: "grep '^version' Cargo.toml | cut -d '\"' -f 2", returnStdout: true).trim()
+                    def cargoVersion = sh(script: "grep '^version' Cargo.toml | tr \" \"\"", returnStdout: true).trim()
                     echo "Cargo.toml Version: ${cargoVersion}"
 
-                    // Hole die neueste Release-Tag von GitHub
-                    def latestTag = sh(script: """
-                        curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
-                        https://api.github.com/repos/${GITHUB_REPO}/releases/latest | \
-                        jq -r '.tag_name'
-                    """, returnStdout: true).trim()
 
                     // Falls keine Releases existieren, starte mit der Version aus Cargo.toml
                     if (!latestTag || latestTag == 'null') {
