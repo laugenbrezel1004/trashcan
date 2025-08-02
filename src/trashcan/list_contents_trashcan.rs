@@ -9,8 +9,9 @@ use std::time::SystemTime;
 impl Trashcan {
     pub(crate) fn list_contents(&self) -> Result<(), String> {
         let mut entries: Vec<(DirEntry, Metadata)> = Vec::new();
-        let mut total_size = 0;
-        let mut count = 0;
+        //TODO:
+        //let mut total_size = 0;
+        //let mut count = 0;
         // Bind colored values to variables first
         let header = "♻️  Trashcan Contents:".bold().bright_blue().to_string();
         let divider = "━".repeat(60).bright_black().to_string();
@@ -26,8 +27,8 @@ impl Trashcan {
                 .metadata()
                 .map_err(|e| format!("failed to get metadata: {}", e))?;
 
-            total_size += metadata.len();
-            count += 1;
+          //  total_size += metadata.len();
+        //    count += 1;
             entries.push((entry, metadata));
         }
 

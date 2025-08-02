@@ -3,13 +3,14 @@ use crate::trashcan::core::Trashcan;
 use clap::{Arg, ArgAction, ArgMatches, Command};
 use owo_colors::OwoColorize;
 use std::path::Path;
-use dialoguer;
 
+/// Command Line Interface handler for the trashcan utility
 pub struct Cli {
     pub matches: ArgMatches,
 }
 
 impl Cli {
+    /// Creates a new CLI instance with all command line arguments configured
     pub fn new() -> Self {
         Self {
             matches: Command::new("trashcan")
@@ -68,22 +69,23 @@ impl Cli {
         }
     }
 
+    /// Executes the appropriate action based on command line arguments
     pub fn run(&self) -> Result<(), String> {
         let trashcan = Trashcan::initialize()?;
 
         if self.matches.get_flag("empty_trash") {
             self.empty_trash(&trashcan)
         } else if self.matches.get_flag("show_trashcan") {
-            trashcan.list_contents().map_err(|e| e.to_string())?;
-            Ok(())
+            self.show_trashcan_contents(&trashcan)
         } else if self.matches.get_flag("restore") {
-            trashcan.restore_latest()?
+            self.restore_latest(&trashcan)
         } else {
             self.handle_files(&trashcan)
         }
     }
 
-    fn empty_trash<>(&self, trashcan: &Trashcan) -> Result<(), String> {
+    /// Handles emptying the trashcan with optional interactive confirmation
+    fn empty_trash(&self, trashcan: &Trashcan) -> Result<(), String> {
         if self.matches.get_flag("interactive") {
             let answer = dialoguer::Confirm::new()
                 .with_prompt("Are you sure you want to empty the trashcan?")
@@ -95,16 +97,24 @@ impl Cli {
                 return Ok(());
             }
         }
-
         trashcan.empty()?;
         println!("{}", "✓ Trashcan emptied successfully".green());
         Ok(())
     }
 
-  
+    /// Shows the contents of the trashcan
+    fn show_trashcan_contents(&self, trashcan: &Trashcan) -> Result<(), String> {
+        trashcan.list_contents().map_err(|e| e.to_string())
+    }
 
+    /// Restores the most recently deleted file from the trashcan
+    fn restore_latest(&self, trashcan: &Trashcan) -> Result<(), String> {
+        let restored = trashcan.restore_latest()?;
+        println!("{} {}", "✓ Restored:".green(), restored.cyan());
+        Ok(())
+    }
 
-
+    /// Handles file operations (moving to trash or permanent deletion)
     fn handle_files(&self, trashcan: &Trashcan) -> Result<(), String> {
         let files = self.matches.get_many::<String>("files")
             .ok_or("No files specified")?;

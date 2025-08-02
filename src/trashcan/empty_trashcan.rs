@@ -1,6 +1,6 @@
 use std::fs;
 use owo_colors::OwoColorize;
-use crate::trashcan::core::Trashcan;;
+use crate::trashcan::core::Trashcan;
 impl Trashcan {
     pub fn empty(&self) -> Result<(), String> {
         if !self.trashcan_path.exists() {

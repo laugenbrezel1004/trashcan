@@ -1,12 +1,14 @@
+use crate::trashcan::core::Trashcan;
 use std::fs;
 use std::path::Path;
 use std::time::{SystemTime, UNIX_EPOCH};
+use owo_colors::OwoColorize;
 
-pub mod test {
-    pub fn move_to_trash(&self, file: &str) -> Result<(), String> {
-        let src = Path::new(file);
+impl Trashcan {
+    pub fn move_to_trash(&self, infile: &str) -> Result<(), String> {
+        let src = Path::new(infile);
         if !src.exists() {
-            return Err(format!("File '{}' does not exist", file.red()));
+            return Err(format!("File '{}' does not exist", infile.red().bold()));
         }
 
         //let uuid = Uuid::new_v4()
@@ -15,28 +17,15 @@ pub mod test {
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_secs();
-        let dest_name = format!(
+        let outfile = format!(
             "{}~{:?}",
             src.file_name().ok_or("Invalid filename")?.to_string_lossy(),
             timestamp
         );
 
-        let dest = self.path.join(&dest_name);
-        fs::rename(src, &dest).map_err(|e| format!("Failed to move file to trash: {e}"))?;
-
-        // Create trashinfo file (compatible with FreeDesktop.org Trash spec)
-        let info_content = format!(
-            "[Trash Info]\nPath={}\nDeletionDate={}",
-            src.to_string_lossy(),
-            Local::now().format("%Y-%m-%dT%H:%M:%S")
-        );
-
-        fs::write(
-            self.info_dir.join(format!("{:?}.trashinfo", timestamp)),
-            info_content,
-        )
-        .map_err(|e| format!("Failed to create trash info: {e}"))?;
-
+        let dest = self.trashcan_path.join(outfile);
+        fs::rename(src, &dest).map_err(|e| format!("Failed to move file to trash: {e}").red().bold().to_string())?;
+        
         Ok(())
     }
 }

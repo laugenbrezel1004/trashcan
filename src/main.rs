@@ -1,3 +1,4 @@
+
 // src/main.rs
 mod cli;
 pub mod trashcan;
