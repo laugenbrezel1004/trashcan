@@ -43,8 +43,8 @@ pipeline {
             steps {
                 script {
                     // Hole die aktuelle Version aus Cargo.toml
-                    def cargoVersion = sh(script: "grep '^version' Cargo.toml | tr \" \"\"", returnStdout: true).trim()
-                    echo "Cargo.toml Version: ${cargoVersion}"
+                    def newVersion = sh(script: "awk -F'\"' '/^version\s*=\s*\"/ {gsub(/\./, \"\", $2); print $2 + 1}' Cargo.toml", returnStdout: true).trim()                    echo "Cargo.toml Version: ${cargoVersion}"
+                    echo newVersion
 
 
                     // Falls keine Releases existieren, starte mit der Version aus Cargo.toml
