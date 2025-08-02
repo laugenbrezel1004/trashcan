@@ -9,9 +9,8 @@ pipeline {
     environment {
         GITHUB_TOKEN = credentials('github-pat')
         GITHUB_REPO = 'laugenbrezel1004/trashcan'
-        RELEASE_TAG = "v1.0.${env.BUILD_NUMBER}"
+        // RELEASE_TAG wird dynamisch generiert, daher entfernen wir die statische Definition
     }
-
 
     stages {
         stage('Checkout') {
@@ -23,8 +22,6 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'rustup component add clippy'
-                //sh 'cargo clippy --all-targets --all-features -- -D warnings'
-                // d warnings exits if any kind of warning is found
                 sh 'cargo clippy --all-targets --all-features'
                 sh 'cargo test'
             }
@@ -42,35 +39,70 @@ pipeline {
             }
         }
 
+        stage('Create GitHub Release') {
+            steps {
+                script {
+                    // Hole die aktuelle Version aus Cargo.toml
+                    def cargoVersion = sh(script: "grep '^version' Cargo.toml | cut -d '\"' -f 2", returnStdout: true).trim()
+                    echo "Cargo.toml Version: ${cargoVersion}"
 
-         stage('Create GitHub Release') {
-             steps {
-                 script {
-                     // Extrahiere die Version aus Cargo.toml
-                     def version = sh(script: "grep '^version' Cargo.toml | cut -d '\"' -f 2", returnStdout: true).trim()
-                     echo "Version: ${version}"
-                     // Erstelle den GitHub-Release
-                     createGitHubRelease(
-                         credentialId: 'github-pat', // ID des GitHub Personal Access Tokens
-                         repository: 'laugenbrezel1004/trashcan', // Dein Repository
-                         tag: "v${version}", // Tag für den Release (z. B. v0.1.0)
-                        // commitish: 'main', // Branch oder Commit-SHA
-                         //assets: 'target/release/trashcan' // Optional, falls direkt hier hochgeladen
-                     )
-                     // Lade das Asset hoch
-                     uploadGithubReleaseAsset(
-                         credentialId: 'github-pat',
-                         repository: 'laugenbrezel1004/trashcan',
-                         tagName: "v${version}",
-                         uploadAssets: [
-                             [filePath: 'trashcan']
-                         ]
-                     )
-                 }
-             }
-         }
+                    // Hole die neueste Release-Tag von GitHub
+                    def latestTag = sh(script: """
+                        curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
+                        https://api.github.com/repos/${GITHUB_REPO}/releases/latest | \
+                        jq -r '.tag_name'
+                    """, returnStdout: true).trim()
 
-    } //stages
+                    // Falls keine Releases existieren, starte mit der Version aus Cargo.toml
+                    if (!latestTag || latestTag == 'null') {
+                        latestTag = "v${cargoVersion}"
+                    }
+
+                    // Parse die aktuelle Versionsnummer (entferne 'v' falls vorhanden)
+                    def version = latestTag.startsWith('v') ? latestTag.replace('v', '') : latestTag
+                    def versionParts = version.split('\\.')
+                    def major = versionParts[0].toInteger()
+                    def minor = versionParts[1].toInteger()
+                    def patch = versionParts[2].toInteger()
+
+                    // Erhöhe die Patch-Version
+                    def newPatch = patch + 1
+                    def newVersion = "${major}.${minor}.${newPatch}"
+                    def newTag = "v${newVersion}"
+
+                    // Optional: Aktualisiere Cargo.toml mit der neuen Version
+                    sh """
+                        sed -i 's/version = "${cargoVersion}"/version = "${newVersion}"/' Cargo.toml
+                        git add Cargo.toml
+                        git commit -m "Bump version to ${newVersion}"
+                        git push
+                    """
+
+                    echo "Neue Versionsnummer: ${newTag}"
+
+                    // Erstelle den GitHub-Release
+                    createGitHubRelease(
+                        credentialId: 'github-pat',
+                        repository: "${GITHUB_REPO}",
+                        tag: "${newTag}",
+                        title: "Release ${newTag}",
+                        releaseNotes: "Automatisch generierte Release ${newTag}",
+                        commitish: 'main' // Stelle sicher, dass dies dein Standard-Branch ist
+                    )
+
+                    // Lade das Asset hoch
+                    uploadGithubReleaseAsset(
+                        credentialId: 'github-pat',
+                        repository: "${GITHUB_REPO}",
+                        tagName: "${newTag}",
+                        uploadAssets: [
+                            [filePath: 'target/release/trashcan']
+                        ]
+                    )
+                }
+            }
+        }
+    }
 
     post {
         failure {
