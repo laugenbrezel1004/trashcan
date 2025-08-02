@@ -16,16 +16,16 @@ impl Trashcan {
         let header = "♻️  Trashcan Contents:".bold().bright_blue().to_string();
         let divider = "━".repeat(60).bright_black().to_string();
 
-        println!("{}", header);
-        println!("{}", divider);
+        println!("{header}");
+        println!("{divider}");
 
         for entry in fs::read_dir(&self.trashcan_path)
-            .map_err(|e| format!("failed to read trashcan: {}", e))?
+            .map_err(|e| format!("failed to read trashcan: {e}"))?
         {
-            let entry = entry.map_err(|e| format!("failed to read entry: {}", e))?;
+            let entry = entry.map_err(|e| format!("failed to read entry: {e}"))?;
             let metadata = entry
                 .metadata()
-                .map_err(|e| format!("failed to get metadata: {}", e))?;
+                .map_err(|e| format!("failed to get metadata: {e}"))?;
 
           //  total_size += metadata.len();
         //    count += 1;
@@ -65,8 +65,7 @@ impl Trashcan {
                 "� unknown".to_string()
             };
             println!(
-                "{:>3}. {:<47} {:>10} {:>8} {}",
-                i, bold_name, colored_size, file_type, colored_modified
+                "{i:>3}. {bold_name:<47} {colored_size:>10} {file_type:>8} {colored_modified}"
             );
         }
 
@@ -76,7 +75,7 @@ impl Trashcan {
         //           "{:>3}. {:<30} {:>10} {:>8} {}",
         //          index, bold_name, colored_size, file_type, colored_modified
         //     );
-        println!("{}", divider);
+        println!("{divider}");
 
 
         Ok(())

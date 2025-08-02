@@ -74,7 +74,10 @@ impl Cli {
         let trashcan = Trashcan::initialize()?;
 
         if self.matches.get_flag("empty_trash") {
-            self.empty_trash(&trashcan)
+            if self.matches.get_flag("interactive") {
+                trashcan.empty(true)?;
+            }
+            trashcan.empty(false)
         } else if self.matches.get_flag("show_trashcan") {
             self.show_trashcan_contents(&trashcan)
         } else if self.matches.get_flag("restore") {
@@ -82,24 +85,6 @@ impl Cli {
         } else {
             self.handle_files(&trashcan)
         }
-    }
-
-    /// Handles emptying the trashcan with optional interactive confirmation
-    fn empty_trash(&self, trashcan: &Trashcan) -> Result<(), String> {
-        if self.matches.get_flag("interactive") {
-            let answer = dialoguer::Confirm::new()
-                .with_prompt("Are you sure you want to empty the trashcan?")
-                .interact()
-                .map_err(|e| format!("Failed to get user input: {e}"))?;
-
-            if !answer {
-                println!("{}", "Operation cancelled".yellow());
-                return Ok(());
-            }
-        }
-        trashcan.empty()?;
-        println!("{}", "✓ Trashcan emptied successfully".green());
-        Ok(())
     }
 
     /// Shows the contents of the trashcan
@@ -116,7 +101,9 @@ impl Cli {
 
     /// Handles file operations (moving to trash or permanent deletion)
     fn handle_files(&self, trashcan: &Trashcan) -> Result<(), String> {
-        let files = self.matches.get_many::<String>("files")
+        let files = self
+            .matches
+            .get_many::<String>("files")
             .ok_or("No files specified")?;
         let nuke_mode = self.matches.get_flag("nuke");
         let interactive = self.matches.get_flag("interactive");
@@ -128,7 +115,11 @@ impl Cli {
             }
 
             if interactive {
-                let action = if nuke_mode { "permanently delete" } else { "move to trash" };
+                let action = if nuke_mode {
+                    "permanently delete"
+                } else {
+                    "move to trash"
+                };
                 let answer = dialoguer::Confirm::new()
                     .with_prompt(format!("{} {}?", action, file.cyan()))
                     .interact()

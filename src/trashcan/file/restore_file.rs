@@ -39,7 +39,7 @@ impl Trashcan {
         // Extract original name (remove UUID prefix)
         let original_name = file_name
             .split('~')
-            .last()
+            .next_back()
             .ok_or("Invalid trashcan file format".red().bold().to_string())?;
 
         let dest = Path::new(original_name);

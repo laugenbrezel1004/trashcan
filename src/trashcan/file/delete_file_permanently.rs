@@ -10,7 +10,7 @@ pub fn nuke_file( file: &str) -> Result<(), String> {
         fs::remove_file(path).map_err(|e| format!("Failed to delete file: {e}"))?;
 
     }
-    println!("{} {}", "💥 file {}".green().to_string(), file);
+    println!("{} {}", "💥 file {}".green(), file);
     
     Ok(())
 

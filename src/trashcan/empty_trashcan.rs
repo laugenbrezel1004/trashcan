@@ -2,7 +2,19 @@ use std::fs;
 use owo_colors::OwoColorize;
 use crate::trashcan::core::Trashcan;
 impl Trashcan {
-    pub fn empty(&self) -> Result<(), String> {
+    pub fn empty(&self, interactive: bool) -> Result<(), String> {
+        if interactive {
+            let answer = dialoguer::Confirm::new()
+                .with_prompt("Are you sure you want to empty the trashcan?")
+                .interact()
+                .map_err(|e| format!("Failed to get user input: {e}"))?;
+
+            if !answer {
+                println!("{}", "Operation cancelled".yellow());
+                return Ok(());
+            }
+        }
+
         if !self.trashcan_path.exists() {
             return Err("Trashcan does not exist".red().bold().to_string());
         }
@@ -16,14 +28,14 @@ impl Trashcan {
 
             if path.is_dir() {
                 fs::remove_dir_all(&path)
-                    .map_err(|e| format!("Failed to remove directory {:?}: {e}", path).red().bold().to_string())?;
+                    .map_err(|e| format!("Failed to remove directory {path:?}: {e}").red().bold().to_string())?;
             } else {
                 fs::remove_file(&path)
-                    .map_err(|e| format!("Failed to remove file {:?}: {e}", path).red().bold().to_string())?;
+                    .map_err(|e| format!("Failed to remove file {path:?}: {e}").red().bold().to_string())?;
             }
         }
 
-
+        println!("{}", "✓ Trashcan emptied successfully".green());
         Ok(())
     }
 }
