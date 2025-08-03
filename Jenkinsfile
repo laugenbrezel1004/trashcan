@@ -18,10 +18,10 @@ pipeline {
                 checkout scm
             }
         }
-        
-        stage('Dependencies'){
+
+        stage('Docker Dependencies'){
             steps {
-                sh 'apt update -y && apt install python3-toml python3 -y'
+                sh 'apt update -y && apt install python3-toml -y'
             }
         }
 
@@ -32,7 +32,7 @@ pipeline {
                 sh 'cargo test'
             }
         }
-        
+
         stage("Push Version"){
             steps{
                 sh 'python3 bin/python/updateVersion.py'
@@ -52,7 +52,6 @@ pipeline {
 
         stage('Create GitHub Release') {
             steps {
-            sh 'python bin/python/updateVersion.py'
                 script {
                     // Hole die aktuelle Version aus Cargo.toml
                     //def newVersion = sh(script: "awk -F'\"' '/^version\\s*=\\s*\"/ {gsub(/\./, \"\", $2); print $2 + 1}' Cargo.toml", returnStdout: true).trim()                    echo "Cargo.toml Version: ${cargoVersion}"
