@@ -29,7 +29,7 @@ pipeline {
         
         stage("Push Version"){
             steps{
-                sh 'python bin/python/updateVersion.py'
+                sh 'python3 bin/python/updateVersion.py'
             }
         }
         stage('Build') {
