@@ -19,12 +19,6 @@ pipeline {
             }
         }
 
-        stage('Docker Dependencies'){
-            steps {
-                sh 'apt update -y && apt install python3-toml -y'
-            }
-        }
-
         stage('Test') {
             steps {
                 sh 'rustup component add clippy'
@@ -33,11 +27,6 @@ pipeline {
             }
         }
 
-        stage("Push Version"){
-            steps{
-                sh 'python3 bin/python/updateVersion.py'
-            }
-        }
         stage('Build') {
             steps {
                 sh 'cargo build --release'
