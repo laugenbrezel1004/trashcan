@@ -58,7 +58,7 @@ pipeline {
                     uploadGithubReleaseAsset(
                         credentialId: 'github-pat',
                         repository: "${GITHUB_REPO}",
-                        tagName: "$version}",
+                        tagName: "${version}",
                         uploadAssets: [
                             [filePath: 'target/release/trashcan']
                         ]
