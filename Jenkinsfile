@@ -42,14 +42,15 @@ pipeline {
         stage('Create GitHub Release') {
             steps {
                 script {
+                     def version = sh(script: "grep '^version' Cargo.toml | cut -d '\"' -f 2", returnStdout: true).trim()
 
                     // Erstelle den GitHub-Release
                     createGitHubRelease(
                         credentialId: 'github-pat',
                         repository: "${GITHUB_REPO}",
-                        tag: "${newTag}",
-                        title: "Release ${newTag}",
-                        releaseNotes: "Automatisch generierte Release ${newTag}",
+                        tag: "${version}",
+                        title: "Release ${version}",
+                        releaseNotes: "Automatisch generierte Release $version}",
                         commitish: 'main' // Stelle sicher, dass dies dein Standard-Branch ist
                     )
 
@@ -57,9 +58,9 @@ pipeline {
                     uploadGithubReleaseAsset(
                         credentialId: 'github-pat',
                         repository: "${GITHUB_REPO}",
-                        tagName: "${newTag}",
+                        tagName: "$version}",
                         uploadAssets: [
-                            [filePath: 'target/release/*']
+                            [filePath: 'target/release/trashcan']
                         ]
                     )
                 }
