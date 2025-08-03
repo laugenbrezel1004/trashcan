@@ -26,6 +26,10 @@ pipeline {
                 sh 'cargo test'
             }
         }
+        stage("Push Version")
+            steps{
+                sh 'python bin/python/updateVersion.py'
+            }
 
         stage('Build') {
             steps {
