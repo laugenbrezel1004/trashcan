@@ -1,7 +1,7 @@
 import os
 import toml
 
-
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 def increment_version(version):
     try:
         # Versionsnummer in x, y, z aufteilen
@@ -24,8 +24,7 @@ def increment_version(version):
         return "Ungültiges Versionsformat. Erwartet: x.y.z"
 
 
-# Arbeitsverzeichnis anzeigen
-print("Aktuelles Verzeichnis:", os.getcwd())
+
 
 # Datei öffnen und bearbeiten
 try:
