@@ -21,7 +21,7 @@ pipeline {
         
         stage('Dependencies'){
             steps {
-                sh 'apt update && apt install python3-toml'
+                sh 'apt update && apt install python3-toml python3'
             }
         }
 
