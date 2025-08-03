@@ -43,6 +43,7 @@ pipeline {
             steps {
                 script {
                      def version = sh(script: "grep '^version' Cargo.toml | cut -d '\"' -f 2", returnStdout: true).trim()
+                     echo ${version}
 
                     // Erstelle den GitHub-Release
                     createGitHubRelease(
@@ -58,7 +59,7 @@ pipeline {
                     uploadGithubReleaseAsset(
                         credentialId: 'github-pat',
                         repository: "${GITHUB_REPO}",
-                        tagName: "${version}",
+                        tagName: "v${version}",
                         uploadAssets: [
                             [filePath: 'target/release/trashcan']
                         ]
