@@ -50,8 +50,8 @@ pipeline {
                         credentialId: 'github-pat',
                         repository: "${GITHUB_REPO}",
                         tag: ${version},
-                        //title: "Release ${version}",
-                     //   releaseNotes: "Automatisch generierte Release $version}",
+                        title: "Release ${version}",
+                        releaseNotes: "Automatisch generierte Release $version}",
                         commitish: 'main' // Stelle sicher, dass dies dein Standard-Branch ist
                     )
 
