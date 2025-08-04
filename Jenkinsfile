@@ -42,7 +42,7 @@ pipeline {
         stage('Create GitHub Release') {
             steps {
                 script {
-                     def version = sh(script: "grep '^version' Cargo.toml | cut -d '\"' -f 2", returnStdout: true).trim()
+                     def version = sh(script: "grep -m 1 '^version' Cargo.toml | cut -d '\"' -f 2", returnStdout: true).trim()
                      echo "${version}"
 
                     // Erstelle den GitHub-Release
