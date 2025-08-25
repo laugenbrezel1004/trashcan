@@ -8,8 +8,7 @@ use owo_colors::OwoColorize;
 use std::process;
 
 fn main() {
-    let cli = Cli::new();
-    if let Err(e) = cli.run() {
+    if let Err(e) = Cli::new().run() {
         eprintln!("{} {}", "trashcan: ✗ Error -> ".red().bold(), e);
         process::exit(1);
     }

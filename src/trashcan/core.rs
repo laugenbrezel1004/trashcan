@@ -1,5 +1,4 @@
 // src/trashcan/core.rs
-use 
 use std::fs;
 use std::path::{Path, PathBuf};
 use users::{get_current_uid, get_user_by_uid};

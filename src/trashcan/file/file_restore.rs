@@ -6,7 +6,7 @@ use std::path::Path;
 use std::time::SystemTime;
 
 impl Trashcan {
-    pub fn restore_latest(&self) -> Result<String, String> {
+    pub fn restore (&self) -> Result<(), String> {
         let mut entries: Vec<DirEntry> = fs::read_dir(&self.trashcan_path)
             .map_err(|e| {
                 format!("Failed to read trashcan: {e}")
@@ -64,6 +64,7 @@ impl Trashcan {
             latest.path().to_string_lossy().cyan()
         );
 
-        Ok(original_name.to_string())
+        // Ok(original_name.to_string())
+        Ok(())
     }
 }

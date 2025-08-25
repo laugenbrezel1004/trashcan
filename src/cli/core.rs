@@ -70,18 +70,19 @@ impl Cli {
     }
     /// Executes the appropriate action based on command line arguments
     pub fn run(&self) -> Result<(), String> {
+
         let trashcan = Trashcan::initialize()?;
 
-        //empty
         // check the  ok thingy later on i dont know if it can breakt somehing
         match (self.matches.get_flag("interactive"), self.matches.get_flag("empty_trash"), self.matches.get_flag("show_trashcan"), self.matches.get_flag("restore")) {
-            (true, true, false, false) => trashcan.empty_trash(true)?,
-            (_, true, false, false) => trashcan.empty_trash(false)?, // TODO: Sicherheitsmechanismus hinzufügen
+            (true, true, false, false) => trashcan.remove_garbage(true)?,
+            (_, true, false, false) => trashcan.remove_garbage(false)?, // TODO: Sicherheitsmechanismus hinzufügen
             (_, false, true, false) => {
                 trashcan.list_contents()?
             }
-            (_, false, false, true) => trashcan.restore_latest(&trashcan),
+            (_, false, false, true) => trashcan.restore()?,
             _ => self.handle_files(&trashcan),
         }
+        Ok(())
     }
 }

@@ -2,7 +2,7 @@ use std::fs;
 use owo_colors::OwoColorize;
 use crate::trashcan::core::Trashcan;
 impl Trashcan {
-    pub fn empty_trash(&self, interactive: bool) -> Result<(), String> {
+    pub fn remove_garbage(&self, interactive: bool) -> Result<(), String> {
         if interactive {
             let answer = dialoguer::Confirm::new()
                 .with_prompt("Are you sure you want to empty the trashcan?")

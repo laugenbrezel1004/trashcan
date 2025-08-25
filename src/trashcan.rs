@@ -1,8 +1,8 @@
 pub mod core;
-mod empty_trashcan;
-pub mod list_contents_trashcan;
+mod trashcan_remove_garbage;
+pub mod trashcan_list_contents;
 mod file {
-    mod delete_file_permanently;
-    mod move_file_to_trash;
-    mod restore_file;
+    mod file_nuke;
+    mod file_move_to_trash;
+    mod file_restore;
 }
