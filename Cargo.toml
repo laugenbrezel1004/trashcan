@@ -9,6 +9,7 @@ owo-colors = "4.2.2"
 users = "0.11.0"
 chrono = "0.4.41"
 dialoguer = "0.11.0"
+uuid = { version = "1.18.0", features = ["v4"] }
 
 [dev-dependencies]
 

@@ -3,6 +3,7 @@ use std::fs;
 use std::path::Path;
 use std::time::{SystemTime, UNIX_EPOCH};
 use owo_colors::OwoColorize;
+use uuid::Uuid;
 
 impl Trashcan {
     pub fn move_to_trash(&self, infile: &str) -> Result<(), String> {
@@ -11,19 +12,15 @@ impl Trashcan {
             return Err(format!("File '{}' does not exist", infile.red().bold()));
         }
 
-        //let uuid = Uuid::new_v4()
-        //let uuid = Uuid::new_v7();
-        let timestamp = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap()
-            .as_secs();
+        let uuid = Uuid::new_v4();
         let outfile = format!(
             "{}~{:?}",
             src.file_name().ok_or("Invalid filename")?.to_string_lossy(),
-            timestamp
+            uuid
         );
 
         let dest = self.trashcan_path.join(outfile);
+        // TODO: does this work over filesystem boundaries
         fs::rename(src, &dest).map_err(|e| format!("Failed to move file to trash: {e}").red().bold().to_string())?;
         
         Ok(())

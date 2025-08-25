@@ -7,7 +7,7 @@ use std::fs::{DirEntry, Metadata};
 use std::time::SystemTime;
 
 impl Trashcan {
-    pub(crate) fn list_contents(&self) -> Result<(), String> {
+    pub fn list_contents(&self) -> Result<(), String> {
         let mut is_empty: bool = true;
         let mut entries: Vec<(DirEntry, Metadata)> = Vec::new();
         //TODO: show also the size of the trashcan directory
@@ -86,13 +86,12 @@ impl Trashcan {
             count_str.yellow(), total_size_str.bright_magenta()
         );
 
+        println!("{divider}");
+
         if count == 0 {
             let empty_msg = "🛑 The trashcan is empty".bold();
             println ! ("{}", empty_msg.bright_red());
         }
-
-
-        println!("{divider}");
 
         Ok(())
     }

@@ -3,7 +3,7 @@
 mod cli;
 pub mod trashcan;
 
-use cli::Cli;
+use cli::core::Cli;
 use owo_colors::OwoColorize;
 use std::process;
 

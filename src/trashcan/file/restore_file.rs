@@ -18,7 +18,7 @@ impl Trashcan {
             .collect();
 
         if entries.is_empty() {
-            return Err("Trashcan is empty".yellow().to_string());
+            return Err("I ain't restoring nothing".yellow().to_string());
         }
 
         // Sort by modification time (newest first)
