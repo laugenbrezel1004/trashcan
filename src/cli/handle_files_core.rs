@@ -5,7 +5,7 @@ use std::path::Path;
 
 /// Handles file operations (moving to trash or permanent deletion)
 impl Cli {
-    fn handle_files(&self, trashcan: &Trashcan) -> Result<(), String> {
+    pub fn handle_files(&self, trashcan: &Trashcan) -> Result<(), String> {
         let files = self
             .matches
             .get_many::<String>("files")

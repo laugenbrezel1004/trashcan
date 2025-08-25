@@ -70,18 +70,27 @@ impl Cli {
     }
     /// Executes the appropriate action based on command line arguments
     pub fn run(&self) -> Result<(), String> {
-
         let trashcan = Trashcan::initialize()?;
 
         // check the  ok thingy later on i dont know if it can breakt somehing
-        match (self.matches.get_flag("interactive"), self.matches.get_flag("empty_trash"), self.matches.get_flag("show_trashcan"), self.matches.get_flag("restore")) {
-            (true, true, false, false) => trashcan.remove_garbage(true)?,
-            (_, true, false, false) => trashcan.remove_garbage(false)?, // TODO: Sicherheitsmechanismus hinzufügen
-            (_, false, true, false) => {
-                trashcan.list_contents()?
-            }
+        match (
+            self.matches.get_flag("interactive"),
+            self.matches.get_flag("nuke"),
+            // stand alone flags
+            self.matches.get_flag("empty_trash"),
+            self.matches.get_flag("show_trashcan"),
+            self.matches.get_flag("restore"),
+        ) {
+            (true, true, false, false, false) => trashcan.remove_garbage(true)?,
+            (_, true, false, false, _) => trashcan.remove_garbage(false)?, // TODO: Sicherheitsmechanismus hinzufügen
+            (_, false, true, false) => trashcan.list_contents()?,
             (_, false, false, true) => trashcan.restore()?,
-            _ => self.handle_files(&trashcan),
+            // i'll do that shit when i get it what is does exactly
+            // ich bin gebrochen :/
+            _ => self.handle_files(&trashcan)?,
+            // if there is no flag, delete the given files - if the user sumbmits no files, nor flags, clap should get the error
+            // and prombt the user a error message
+            // _ => println!(".?>"),
         }
         Ok(())
     }
