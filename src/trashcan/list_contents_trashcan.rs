@@ -21,7 +21,6 @@ impl Trashcan {
 
         println!("{header}");
         println!("{divider}");
-
         for entry in fs::read_dir(&self.trashcan_path)
             .map_err(|e| format!("failed to read trashcan: {e}"))?
         {
@@ -68,36 +67,33 @@ impl Trashcan {
             } else {
                 "� unknown".to_string()
             };
-            println!(
-                "{i:>3}. {bold_name:<47} {colored_size:>10} {file_type:>8} {colored_modified}"
-            );
+
+
+                println!(
+                   "{:>3}. {:<30} {:>10} {:>8} {}",
+                  i.yellow(), bold_name, colored_size, file_type, colored_modified
+             );
         }
-
-        //    let index = (i + 1).to_string().bright_yellow();
-
-        //        println!(
-        //           "{:>3}. {:<30} {:>10} {:>8} {}",
-        //          index, bold_name, colored_size, file_type, colored_modified
-        //     );
         if is_empty {
             println!("Your trashcan seems clean as fuck!");
         }
+
+        // Prepare summary line components
+        let count_str = count.to_string();
+        let total_size_str = format_size(total_size, DECIMAL);
+        println!(
+            "{} items, total size: {}",
+            count_str.yellow(), total_size_str.bright_magenta()
+        );
+
+        if count == 0 {
+            let empty_msg = "🛑 The trashcan is empty".bold();
+            println ! ("{}", empty_msg.bright_red());
+        }
+
+
         println!("{divider}");
 
-
         Ok(())
-        // Prepare summary line components
-        //    let count_str = count.to_string().bold();
-        //   let total_size_str = format_size(total_size, DECIMAL).bright_magenta();
-        //  println!(
-        //     "{} items, total size: {}",
-        //    count_str, total_size_str
-        // );
-
-        //    if count == 0 {
-        //   let empty_msg = "🛑 The trashcan is empty".bold().bright_red();
-        //  println ! ("{}", empty_msg);
-        // }
-
     }
 }
