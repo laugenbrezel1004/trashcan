@@ -12,12 +12,14 @@ pub struct Trashcan {
 impl Trashcan {
     /// Initializes the trashcan directory structure
     pub fn initialize() -> Result<Self, String> {
+        // the trashcan directory is directly in $HOME/.trashcan
         let home_dir = get_user_by_uid(get_current_uid())
             .ok_or("Failed to get current user")?
             .home_dir()
             .to_path_buf();
 
-        let trash_path = home_dir.join(".local/share/trashcan");
+        // create trashcan directory if it os not there
+        let trash_path = home_dir.join(".trashcan");
 
         fs::create_dir_all(&trash_path)
             .map_err(|e| format!("Failed to create trashcan directory: {e}"))?;
@@ -30,6 +32,7 @@ impl Trashcan {
    
 
     /// Permanently deletes a file (bypasses trashcan)
+    /// TODO: Replace with the nuke function
     pub fn delete_permanently(&self, file: &str) -> Result<(), String> {
         let path = Path::new(file);
         if path.is_dir() {
