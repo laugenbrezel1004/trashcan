@@ -25,11 +25,11 @@ impl Cli {
                         .short('n')
                         .help("Permanently delete files instead of moving to trash")
                         .action(ArgAction::SetTrue)
-                        .conflicts_with_all(["empty_trash", "show_trashcan", "restore"]),
+                        .conflicts_with_all(["remove_garbage", "show_trashcan", "restore"]),
                 )
                 .arg(
-                    Arg::new("empty_trash")
-                        .long("empty_trash")
+                    Arg::new("remove_garbage")
+                        .long("remove_garbage")
                         .short('e')
                         .help("Empty the entire trashcan")
                         .action(ArgAction::SetTrue)
@@ -41,7 +41,7 @@ impl Cli {
                         .short('l')
                         .help("Show contents of the trashcan")
                         .action(ArgAction::SetTrue)
-                        .conflicts_with_all(["nuke", "empty_trash", "restore"]),
+                        .conflicts_with_all(["nuke", "remove_garbage", "restore"]),
                 )
                 .arg(
                     Arg::new("restore")
@@ -49,7 +49,7 @@ impl Cli {
                         .short('r')
                         .help("Restore the last deleted file from trashcan")
                         .action(ArgAction::SetTrue)
-                        .conflicts_with_all(["nuke", "empty_trash", "show_trashcan"]),
+                        .conflicts_with_all(["nuke", "remove_garbage", "show_trashcan"]),
                 )
                 .arg(
                     Arg::new("interactive")
@@ -63,7 +63,7 @@ impl Cli {
                         .help("Files or directories to operate on")
                         .num_args(1..)
                         .value_name("FILES")
-                        .required_unless_present_any(["empty_trash", "show_trashcan", "restore"]),
+                        .required_unless_present_any(["remove_garbage", "show_trashcan", "restore"]),
                 )
                 .get_matches(),
         }
@@ -77,14 +77,13 @@ impl Cli {
             self.matches.get_flag("interactive"),
             self.matches.get_flag("nuke"),
             // stand alone flags
-            self.matches.get_flag("empty_trash"),
+            self.matches.get_flag("remove_garbage"),
             self.matches.get_flag("show_trashcan"),
             self.matches.get_flag("restore"),
         ) {
-            (true, true, false, false, false) => trashcan.remove_garbage(true)?,
-            (_, true, false, false, _) => trashcan.remove_garbage(false)?, // TODO: Sicherheitsmechanismus hinzufügen
-            (_, false, true, false) => trashcan.list_contents()?,
-            (_, false, false, true) => trashcan.restore()?,
+            (_, _, true, _, _) => trashcan.remove_garbage()?,
+            (_,_, false, true, false) => trashcan.list_contents()?,
+            (_,_, false, false, true) => trashcan.restore()?,
             // i'll do that shit when i get it what is does exactly
             // ich bin gebrochen :/
             _ => self.handle_files(&trashcan)?,
