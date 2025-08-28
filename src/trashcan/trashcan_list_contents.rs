@@ -9,6 +9,15 @@ use std::time::SystemTime;
 
 impl Trashcan {
     pub fn list_contents(&self, verbose: bool) -> Result<(), String> {
+        if !verbose {
+            for entry in fs::read_dir(&self.trashcan_path)
+                .map_err(|e| format!("failed to read trashcan: {e}"))?
+            {
+                let entry = entry.unwrap();
+                print!("{}", entry.file_name().to_string_lossy());
+            }
+            return Ok(());
+        }
         let mut is_empty: bool = true;
         let mut entries: Vec<(DirEntry, Metadata)> = Vec::new();
         let mut total_size: f64 = 0.0;
@@ -91,11 +100,6 @@ impl Trashcan {
             count_str.yellow(),
             total_size.bright_magenta()
         );
-
-        if count == 0 {
-            let empty_msg = "🛑 The trashcan is empty".bold();
-            println!("{}", empty_msg.bright_red());
-        }
 
         Ok(())
     }

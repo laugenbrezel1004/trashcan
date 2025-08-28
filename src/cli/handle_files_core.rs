@@ -46,7 +46,7 @@ impl CLI {
                 trashcan.delete_permanently(file)?;
                 println!("{} {}", "✓ Deleted:".green(), file.cyan());
             } else {
-                trashcan.move_to_trash(file)?;
+                trashcan.move_to_trash(file, verbose)?;
                 println!("{} {}", "✓ Trashed:".green(), file.cyan());
             }
         }

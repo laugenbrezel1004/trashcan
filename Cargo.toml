@@ -11,6 +11,7 @@ chrono = "0.4.41"
 dialoguer = "0.11.0"
 uuid = { version = "1.18.0", features = ["v4"] }
 human_bytes = "0.4.3"
+serde = { version = "1.0.219", features = ["derive"] }
 
 [dev-dependencies]
 

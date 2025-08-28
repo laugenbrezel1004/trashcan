@@ -9,6 +9,13 @@ pub struct Trashcan {
     pub trashcan_path: PathBuf,
 }
 
+/// show output if verbose has been set
+pub fn vprint(message: String, verbose: bool) {
+    if verbose {
+        print!("{}", message);
+    }
+}
+
 impl Trashcan {
     /// Initializes the trashcan directory  directly in $HOME/.trashcan
     pub fn initialize() -> Result<Self, String> {

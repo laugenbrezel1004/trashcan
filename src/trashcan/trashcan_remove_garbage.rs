@@ -1,10 +1,12 @@
-use crate::trashcan::core::Trashcan;
+use crate::trashcan::core::{vprint, Trashcan};
 use human_bytes::human_bytes;
 use humansize::ToF64;
 use owo_colors::OwoColorize;
 use std::fs;
 impl Trashcan {
-    pub fn remove_garbage(&self, interactive: bool, verbose: bool) -> Result<(), String> {
+    /// clear the hole trashcan directory
+    /// TODO: clear only specific files
+    pub fn remove_garbage(&self, _interactive: bool, verbose: bool) -> Result<(), String> {
         let answer = dialoguer::Confirm::new()
             .with_prompt("Are you sure you want to empty the trashcan?")
             .interact()
@@ -57,10 +59,13 @@ impl Trashcan {
             }
         }
 
-        println!("{}", "✓ Trashcan emptied successfully".green());
-        println!(
-            "You have saved {}",
-            human_bytes(total_space_saved).to_string().blue()
+        vprint(
+            "✓ Trashcan emptied successfully".green().to_string(),
+            verbose,
+        );
+        vprint(
+            format!("You have saved {}", human_bytes(total_space_saved).blue()),
+            verbose,
         );
         Ok(())
     }

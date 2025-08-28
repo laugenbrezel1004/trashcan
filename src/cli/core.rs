@@ -6,10 +6,10 @@ pub struct CLI {
     pub matches: ArgMatches,
 }
 
-pub struct CLIMODES {
-    pub interactive: bool,
-    pub nuke: bool,
-    pub verbose: bool,
+pub fn vprint(message: &str, verbose: bool) {
+    if verbose {
+        print!("{}", message);
+    }
 }
 /// Creates new clap CLI and call subfunction to check the given flags
 pub fn start() -> Result<(), String> {
