@@ -1,17 +1,17 @@
 use crate::trashcan::core::Trashcan;
-use human_bytes::human_bytes;
 use chrono::{DateTime, Local};
-use humansize::{DECIMAL, format_size, ToF64};
+use human_bytes::human_bytes;
+use humansize::{format_size, ToF64, DECIMAL};
 use owo_colors::OwoColorize;
 use std::fs;
 use std::fs::{DirEntry, Metadata};
 use std::time::SystemTime;
 
 impl Trashcan {
-    pub fn list_contents(&self) -> Result<(), String> {
+    pub fn list_contents(&self, verbose: bool) -> Result<(), String> {
         let mut is_empty: bool = true;
         let mut entries: Vec<(DirEntry, Metadata)> = Vec::new();
-        let mut total_size:f64 = 0.0;
+        let mut total_size: f64 = 0.0;
         let mut count = 0;
 
         // Bind colored values to variables first
@@ -67,11 +67,14 @@ impl Trashcan {
                 "� unknown".to_string()
             };
 
-
-                println!(
-                   "{:>3}. {:<30} {:>10} {:>20} {}",
-                  i.yellow(), bold_name, colored_size, file_type, colored_modified
-             );
+            println!(
+                "{:>3}. {:<30} {:>10} {:>20} {}",
+                i.yellow(),
+                bold_name,
+                colored_size,
+                file_type,
+                colored_modified
+            );
         }
         if is_empty {
             println!("Your trashcan seems clean as fuck!");
@@ -85,13 +88,13 @@ impl Trashcan {
         let total_size = human_bytes(total_size.to_f64());
         println!(
             "{:>3} items, total size: {}",
-            count_str.yellow(), total_size.bright_magenta()
+            count_str.yellow(),
+            total_size.bright_magenta()
         );
-
 
         if count == 0 {
             let empty_msg = "🛑 The trashcan is empty".bold();
-            println ! ("{}", empty_msg.bright_red());
+            println!("{}", empty_msg.bright_red());
         }
 
         Ok(())

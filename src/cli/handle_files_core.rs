@@ -1,11 +1,17 @@
-use crate::cli::core::Cli;
+use crate::cli::core::CLI;
 use crate::trashcan::core::Trashcan;
 use owo_colors::OwoColorize;
 use std::path::Path;
 
 /// Handles file operations (moving to trash or permanent deletion)
-impl Cli {
-    pub fn handle_files(&self, trashcan: &Trashcan) -> Result<(), String> {
+impl CLI {
+    pub fn handle_files(
+        &self,
+        trashcan: &Trashcan,
+        interactive: bool,
+        nuke: bool,
+        verbose: bool,
+    ) -> Result<(), String> {
         let files = self
             .matches
             .get_many::<String>("files")

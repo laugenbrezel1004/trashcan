@@ -6,7 +6,7 @@ use std::path::Path;
 use std::time::SystemTime;
 
 impl Trashcan {
-    pub fn restore (&self) -> Result<(), String> {
+    pub fn restore(&self, interactive: bool, verbose: bool) -> Result<(), String> {
         let mut entries: Vec<DirEntry> = fs::read_dir(&self.trashcan_path)
             .map_err(|e| {
                 format!("Failed to read trashcan: {e}")

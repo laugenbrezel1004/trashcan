@@ -1,8 +1,8 @@
 // src/trashcan/core.rs
 use std::fs;
 use std::path::{Path, PathBuf};
-use users::{get_current_uid, get_user_by_uid};
 use users::os::unix::UserExt;
+use users::{get_current_uid, get_user_by_uid};
 
 /// Main trashcan implementation
 pub struct Trashcan {
@@ -10,9 +10,8 @@ pub struct Trashcan {
 }
 
 impl Trashcan {
-    /// Initializes the trashcan directory structure
+    /// Initializes the trashcan directory  directly in $HOME/.trashcan
     pub fn initialize() -> Result<Self, String> {
-        // the trashcan directory is directly in $HOME/.trashcan
         let home_dir = get_user_by_uid(get_current_uid())
             .ok_or("Failed to get current user")?
             .home_dir()
@@ -34,13 +33,10 @@ impl Trashcan {
     pub fn delete_permanently(&self, file: &str) -> Result<(), String> {
         let path = Path::new(file);
         if path.is_dir() {
-            fs::remove_dir_all(path)
-                .map_err(|e| format!("Failed to delete directory: {e}"))?;
+            fs::remove_dir_all(path).map_err(|e| format!("Failed to delete directory: {e}"))?;
         } else {
-            fs::remove_file(path)
-                .map_err(|e| format!("Failed to delete file: {e}"))?;
+            fs::remove_file(path).map_err(|e| format!("Failed to delete file: {e}"))?;
         }
         Ok(())
     }
-
 }

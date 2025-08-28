@@ -1,9 +1,9 @@
-use super::core::Cli;
+use super::core::CLI;
 use clap::{Arg, ArgAction, Command};
 
 /// Creates a new CLI instance with all command line arguments configured
-pub fn new() -> Cli {
-    Cli{
+pub fn new() -> CLI {
+    CLI{
     matches: Command::new("trashcan")
     .version(env!("CARGO_PKG_VERSION"))
         .author("Laurenz Schmidt")
