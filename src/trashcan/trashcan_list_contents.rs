@@ -1,6 +1,7 @@
 use crate::trashcan::core::Trashcan;
+use human_bytes::human_bytes;
 use chrono::{DateTime, Local};
-use humansize::{DECIMAL, format_size};
+use humansize::{DECIMAL, format_size, ToF64};
 use owo_colors::OwoColorize;
 use std::fs;
 use std::fs::{DirEntry, Metadata};
@@ -10,12 +11,10 @@ impl Trashcan {
     pub fn list_contents(&self) -> Result<(), String> {
         let mut is_empty: bool = true;
         let mut entries: Vec<(DirEntry, Metadata)> = Vec::new();
-        //TODO: show also the size of the trashcan directory
-        let mut total_size = 0;
+        let mut total_size:f64 = 0.0;
         let mut count = 0;
 
         // Bind colored values to variables first
-        //TODO: Icon for the trashcan? Still problems with rendering the trashcan from nerfonts
         let header = "Trashcan Contents:".bold().bright_blue().to_string();
         let divider = "━".repeat(60).bright_black().to_string();
 
@@ -28,7 +27,7 @@ impl Trashcan {
             let metadata = entry
                 .metadata()
                 .map_err(|e| format!("failed to get metadata: {e}"))?;
-            total_size += metadata.len();
+            total_size += metadata.len().to_f64();
             count += 1;
             entries.push((entry, metadata));
         }
@@ -70,7 +69,7 @@ impl Trashcan {
 
 
                 println!(
-                   "{:>3}. {:<30} {:>10} {:>8} {}",
+                   "{:>3}. {:<30} {:>10} {:>20} {}",
                   i.yellow(), bold_name, colored_size, file_type, colored_modified
              );
         }
@@ -78,15 +77,17 @@ impl Trashcan {
             println!("Your trashcan seems clean as fuck!");
         }
 
+        println!("{divider}");
+
         // Prepare summary line components
         let count_str = count.to_string();
-        let total_size_str = format_size(total_size, DECIMAL);
+        // let total_size_str = format_size(total_size, DECIMAL);
+        let total_size = human_bytes(total_size.to_f64());
         println!(
-            "{} items, total size: {}",
-            count_str.yellow(), total_size_str.bright_magenta()
+            "{:>3} items, total size: {}",
+            count_str.yellow(), total_size.bright_magenta()
         );
 
-        println!("{divider}");
 
         if count == 0 {
             let empty_msg = "🛑 The trashcan is empty".bold();

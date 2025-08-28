@@ -13,6 +13,7 @@ impl Trashcan {
         }
 
         let uuid = Uuid::new_v4();
+        let uuid = uuid.to_string()[0..4].to_string();
         let outfile = format!(
             "{}~{:?}",
             src.file_name().ok_or("Invalid filename")?.to_string_lossy(),
