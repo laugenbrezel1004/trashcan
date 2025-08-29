@@ -45,9 +45,9 @@ impl CLI {
 
     /// Determines which primary operation to perform based on flags
     fn determine_operation_mode(&self) -> OperationMode {
-        if self.matches.get_flag("remove_garbage") {
+        if self.matches.get_flag("remove-garbage") {
             OperationMode::RemoveGarbage
-        } else if self.matches.get_flag("show_trashcan") {
+        } else if self.matches.get_flag("show-trashcan") {
             OperationMode::ShowTrashcan
         } else if self.matches.get_flag("restore") {
             OperationMode::Restore

@@ -108,7 +108,7 @@ trashcan --nuke top_secret_plans.pdf
 trashcan --show-trashcan
 
 # Clear the trashcan (no turning back)
-trashcan --trashcan
+trashcan --show-trashcan
 ```
 
 **Trashcan Location**: Files chill at `~/.trashcan`. Want them back? Just use `trashcan --restore` which restores the last file into the current directory.
