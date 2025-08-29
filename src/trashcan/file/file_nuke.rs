@@ -1,17 +1,16 @@
+use crate::utils::vprint;
+use owo_colors::OwoColorize;
 use std::fs;
 use std::path::Path;
-use owo_colors::OwoColorize;
 
-pub fn nuke( file: &str) -> Result<(), String> {
+pub fn nuke(file: &str, verbose: bool) -> Result<(), String> {
     let path = Path::new(file);
     if path.is_dir() {
         fs::remove_dir_all(path).map_err(|e| format!("Failed to delete directory: {e}"))?;
     } else {
         fs::remove_file(path).map_err(|e| format!("Failed to delete file: {e}"))?;
-
     }
-    println!("{} {}", "💥 file {}".green(), file);
-    
-    Ok(())
+    vprint(format!("{} {}", "💥 file {}".green(), file), verbose);
 
+    Ok(())
 }

@@ -30,13 +30,11 @@ impl CLI {
 
         // Execute the appropriate operation with the mode modifiers
         match operation_mode {
-            //DONE
             OperationMode::RemoveGarbage => {
                 trashcanny.remove_garbage(modes.interactive, modes.verbose)?
             }
-            //DONE
             OperationMode::ShowTrashcan => trashcanny.list_contents(modes.verbose)?,
-            OperationMode::Restore => trashcanny.restore(modes.interactive, modes.verbose)?,
+            OperationMode::Restore => trashcanny.restore(modes.verbose)?,
             OperationMode::HandleFiles => {
                 self.handle_files(&trashcanny, modes.interactive, modes.nuke, modes.verbose)?
             }

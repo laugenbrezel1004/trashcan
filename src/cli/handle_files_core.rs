@@ -1,5 +1,6 @@
 use crate::cli::core::CLI;
 use crate::trashcan::core::Trashcan;
+use crate::trashcan::file;
 use owo_colors::OwoColorize;
 use std::path::Path;
 
@@ -16,8 +17,6 @@ impl CLI {
             .matches
             .get_many::<String>("files")
             .ok_or("No files specified")?;
-        let nuke_mode = self.matches.get_flag("nuke");
-        let interactive = self.matches.get_flag("interactive");
 
         for file in files {
             let path = Path::new(file);
@@ -26,10 +25,10 @@ impl CLI {
             }
 
             if interactive {
-                let action = if nuke_mode {
-                    "permanently delete"
+                let action = if nuke {
+                    "nuke file"
                 } else {
-                    "move to trash"
+                    "move file into trashcan"
                 };
                 let answer = dialoguer::Confirm::new()
                     .with_prompt(format!("{} {}?", action, file.cyan()))
@@ -42,12 +41,10 @@ impl CLI {
                 }
             }
 
-            if nuke_mode {
-                trashcan.delete_permanently(file)?;
-                println!("{} {}", "✓ Deleted:".green(), file.cyan());
+            if nuke {
+                file::file_nuke::nuke(file, verbose)?;
             } else {
                 trashcan.move_to_trash(file, verbose)?;
-                println!("{} {}", "✓ Trashed:".green(), file.cyan());
             }
         }
 

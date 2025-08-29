@@ -1,6 +1,7 @@
 // src/main.rs
 mod cli;
 mod trashcan;
+mod utils;
 
 use owo_colors::OwoColorize;
 use std::process;

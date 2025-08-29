@@ -1,10 +1,9 @@
 use super::super::core::Trashcan;
+use crate::utils;
 use owo_colors::OwoColorize;
 use std::fs;
 use std::path::Path;
 use std::time::{SystemTime, UNIX_EPOCH};
-
-use crate::trashcan::core::vprint;
 
 impl Trashcan {
     pub fn move_to_trash(&self, infile: &str, verbose: bool) -> Result<(), String> {
@@ -35,6 +34,7 @@ impl Trashcan {
         // Format: stem_timestamp.extension (shorter hex format)
         let outfile = format!("{}_{:x}{}", stem, timestamp, extension); // {:x} = hexadecimal
 
+        //TODO:
         let dest = self.trashcan_path.join(&outfile);
 
         // Handle cross-filesystem moves with fallback
@@ -56,7 +56,7 @@ impl Trashcan {
                 )
             })?;
 
-            vprint(
+            utils::vprint(
                 format!(
                     "Copied '{}' to trash (cross-filesystem) as '{}'",
                     original_filename.green(),
@@ -65,7 +65,7 @@ impl Trashcan {
                 verbose,
             );
         } else {
-            vprint(
+            utils::vprint(
                 format!(
                     "Moved '{}' to trash as '{}'",
                     original_filename.green(),
@@ -74,6 +74,10 @@ impl Trashcan {
                 verbose,
             );
         }
+        utils::vprint(
+            format!("{} {}", "✓ Trashed:".green(), outfile.cyan()),
+            verbose,
+        );
 
         Ok(())
     }

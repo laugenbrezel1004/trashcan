@@ -1,4 +1,5 @@
-use crate::trashcan::core::{vprint, Trashcan};
+use crate::trashcan::core::Trashcan;
+use crate::utils;
 use human_bytes::human_bytes;
 use humansize::ToF64;
 use owo_colors::OwoColorize;
@@ -59,11 +60,11 @@ impl Trashcan {
             }
         }
 
-        vprint(
+        utils::vprint(
             "✓ Trashcan emptied successfully".green().to_string(),
             verbose,
         );
-        vprint(
+        utils::vprint(
             format!("You have saved {}", human_bytes(total_space_saved).blue()),
             verbose,
         );

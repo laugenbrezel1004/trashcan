@@ -1,19 +1,11 @@
-// src/trashcan/core.rs
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use users::os::unix::UserExt;
 use users::{get_current_uid, get_user_by_uid};
 
 /// Main trashcan implementation
 pub struct Trashcan {
     pub trashcan_path: PathBuf,
-}
-
-/// show output if verbose has been set
-pub fn vprint(message: String, verbose: bool) {
-    if verbose {
-        print!("{}", message);
-    }
 }
 
 impl Trashcan {
@@ -33,17 +25,5 @@ impl Trashcan {
         Ok(Self {
             trashcan_path: trash_path,
         })
-    }
-
-    /// Permanently deletes a file (bypasses trashcan)
-    /// TODO: Replace with the nuke function
-    pub fn delete_permanently(&self, file: &str) -> Result<(), String> {
-        let path = Path::new(file);
-        if path.is_dir() {
-            fs::remove_dir_all(path).map_err(|e| format!("Failed to delete directory: {e}"))?;
-        } else {
-            fs::remove_file(path).map_err(|e| format!("Failed to delete file: {e}"))?;
-        }
-        Ok(())
     }
 }

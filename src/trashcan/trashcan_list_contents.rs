@@ -14,12 +14,13 @@ impl Trashcan {
                 .map_err(|e| format!("failed to read trashcan: {e}"))?
             {
                 let entry = entry.unwrap();
-                print!("{}", entry.file_name().to_string_lossy());
+                print!("{}\n", entry.file_name().to_string_lossy());
             }
             return Ok(());
         }
         let mut is_empty: bool = true;
         let mut entries: Vec<(DirEntry, Metadata)> = Vec::new();
+        //TODO: get correct size from files hidden in subdirectory
         let mut total_size: f64 = 0.0;
         let mut count = 0;
 

@@ -1,4 +1,5 @@
 use crate::trashcan::core::Trashcan;
+use crate::utils;
 use owo_colors::OwoColorize;
 use std::fs;
 use std::fs::DirEntry;
@@ -6,7 +7,7 @@ use std::path::Path;
 use std::time::SystemTime;
 
 impl Trashcan {
-    pub fn restore(&self, interactive: bool, verbose: bool) -> Result<(), String> {
+    pub fn restore(&self, verbose: bool) -> Result<(), String> {
         let mut entries: Vec<DirEntry> = fs::read_dir(&self.trashcan_path)
             .map_err(|e| {
                 format!("Failed to read trashcan: {e}")
@@ -58,13 +59,15 @@ impl Trashcan {
         })?;
 
         //könnte noch aua machen :/
-        println!(
-            "{} {}",
-            "✓ Restored:".green(),
-            latest.path().to_string_lossy().cyan()
+        utils::vprint(
+            format!(
+                "{} {}",
+                "✓ Restored:".green(),
+                latest.path().to_string_lossy().cyan()
+            ),
+            verbose,
         );
 
-        // Ok(original_name.to_string())
         Ok(())
     }
 }
