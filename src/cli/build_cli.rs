@@ -16,22 +16,22 @@ pub fn new() -> CLI {
                 .short('n')
                 .help("Permanently delete files instead of moving to trash")
                 .action(ArgAction::SetTrue)
-                .conflicts_with_all(["remove_garbage", "show_trashcan", "restore"]),
+                .conflicts_with_all(["remove-garbage", "show-trashcan", "restore"]),
         ) .arg(
-            Arg::new("remove_garbage")
-                .long("remove_garbage")
+            Arg::new("remove-garbage")
+                .long("remove-garbage")
                 .short('e')
                 .help("Empty the entire trashcan")
                 .action(ArgAction::SetTrue)
-                .conflicts_with_all(["nuke", "show_trashcan", "restore"]),
+                .conflicts_with_all(["nuke", "show-trashcan", "restore"]),
         )
         .arg(
-            Arg::new("show_trashcan")
-                .long("show_trashcan")
+            Arg::new("show-trashcan")
+                .long("show-trashcan")
                 .short('l')
                 .help("Show contents of the trashcan")
                 .action(ArgAction::SetTrue)
-                .conflicts_with_all(["nuke", "remove_garbage", "restore"]),
+                .conflicts_with_all(["nuke", "remove-garbage", "restore"]),
         )
         .arg(
             Arg::new("restore")
@@ -39,13 +39,13 @@ pub fn new() -> CLI {
                 .short('r')
                 .help("Restore the last deleted file from trashcan")
                 .action(ArgAction::SetTrue)
-                .conflicts_with_all(["nuke", "remove_garbage", "show_trashcan"]),
+                .conflicts_with_all(["nuke", "remove-garbage", "show-trashcan"]),
         )
         .arg(
             Arg::new("verbose")
                 .long("verbose")
                 .short('v')
-                .help("Speak verbose output")
+                .help("Speak like a waterfall")
                 .action(ArgAction::SetTrue)
         )
         .arg(
@@ -60,7 +60,7 @@ pub fn new() -> CLI {
                 .help("Files or directories to operate on")
                 .num_args(1..)
                 .value_name("FILES")
-                .required_unless_present_any(["remove_garbage", "show_trashcan", "restore"]),
+                .required_unless_present_any(["remove-garbage", "show-trashcan", "restore"]),
         )
         .get_matches()
     }
